@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Project Repository - Project Intelligence</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>">
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/project.css">
+  <link rel="stylesheet" href="css/theme.css">
+  
+  <!-- Highlight.js for Code Syntax Highlighting -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.8.0/highlightjs-line-numbers.min.js"></script>
+  <!-- Marked.js for Markdown Rendering -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  
+  <style>
+    /* Repository Header */
+    .repo-header { background: var(--white); padding: 2rem 0; border-bottom: 1px solid var(--gray-200); }
+    [data-theme="dark"] .repo-header { background: var(--gray-900); border-bottom-color: var(--gray-800); }
+    .repo-breadcrumbs { display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; color: var(--gray-600); margin-bottom: 1rem; }
+    .repo-breadcrumbs a { color: var(--primary-600); text-decoration: none; }
+    .repo-breadcrumbs a:hover { text-decoration: underline; }
+    .repo-title-wrapper { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; flex-wrap: wrap; }
+    .repo-title-wrapper h1 { font-size: 1.5rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.75rem; }
+    .repo-description { color: var(--gray-600); font-size: 1rem; margin-bottom: 1rem; max-width: 800px; }
+    .repo-badges { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+    .repo-actions { display: flex; gap: 0.5rem; }
+
+    /* Tabs */
+    .repo-tabs { display: flex; border-bottom: 1px solid var(--gray-200); margin-top: 2rem; overflow-x: auto; }
+    [data-theme="dark"] .repo-tabs { border-bottom-color: var(--gray-800); }
+    .repo-tab { padding: 0.75rem 1.25rem; font-size: 0.875rem; font-weight: 500; color: var(--gray-600); border: none; background: transparent; cursor: pointer; border-bottom: 2px solid transparent; display: flex; align-items: center; gap: 0.5rem; white-space: nowrap; }
+    .repo-tab:hover { color: var(--gray-900); }
+    .repo-tab.active { color: var(--primary-600); border-bottom-color: var(--primary-500); }
+    [data-theme="dark"] .repo-tab { color: var(--gray-400); }
+    [data-theme="dark"] .repo-tab:hover { color: var(--gray-200); }
+    [data-theme="dark"] .repo-tab.active { color: var(--primary-400); border-bottom-color: var(--primary-400); }
+
+    /* File Explorer / Code Viewer Layout */
+    .repo-layout { display: grid; grid-template-columns: 280px 1fr; gap: 1.5rem; margin-top: 1.5rem; align-items: start; }
+    @media (max-width: 768px) { .repo-layout { grid-template-columns: 1fr; } }
+    
+    .file-tree { border: 1px solid var(--gray-200); border-radius: var(--radius-lg); background: var(--white); display: flex; flex-direction: column; position: sticky; top: 1.5rem; max-height: calc(100vh - 3rem); overflow: hidden; }
+    #fileList { overflow-y: auto; flex: 1; padding-bottom: 1rem; }
+    [data-theme="dark"] .file-tree { border-color: var(--gray-700); background: var(--gray-800); }
+    .file-tree-header { padding: 0.75rem 1rem; background: var(--gray-50); border-bottom: 1px solid var(--gray-200); font-size: 0.875rem; font-weight: 600; display: flex; align-items: center; gap: 0.5rem; }
+    [data-theme="dark"] .file-tree-header { background: var(--gray-900); border-bottom-color: var(--gray-700); }
+    .file-item { display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; cursor: pointer; font-size: 0.875rem; color: var(--gray-700); user-select: none; border-bottom: 1px solid var(--gray-100); }
+    .file-item:last-child { border-bottom: none; }
+    .file-item:hover { background: var(--gray-50); }
+    .file-item.selected { background: var(--primary-50); color: var(--primary-600); font-weight: 500; }
+    [data-theme="dark"] .file-item { color: var(--gray-300); border-bottom-color: var(--gray-700); }
+    [data-theme="dark"] .file-item:hover { background: var(--gray-700); }
+    [data-theme="dark"] .file-item.selected { background: var(--primary-900); color: var(--primary-300); }
+    .file-item .icon { width: 16px; height: 16px; display: flex; justify-content: center; align-items: center; color: var(--gray-400); }
+    
+    .code-viewer { border: 1px solid var(--gray-200); border-radius: var(--radius-lg); background: var(--white); overflow: hidden; display: flex; flex-direction: column; }
+    [data-theme="dark"] .code-viewer { border-color: var(--gray-700); background: var(--gray-800); }
+    .code-viewer-header { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 1rem; background: var(--gray-50); border-bottom: 1px solid var(--gray-200); font-size: 0.875rem; font-family: monospace; }
+    [data-theme="dark"] .code-viewer-header { background: var(--gray-900); border-bottom-color: var(--gray-700); color: var(--gray-300); }
+    .code-viewer-toolbar { display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 1rem; background: var(--gray-50); border-bottom: 1px solid var(--gray-200); font-size: 0.8125rem; color: var(--gray-600); }
+    [data-theme="dark"] .code-viewer-toolbar { background: var(--gray-900); border-bottom-color: var(--gray-700); color: var(--gray-400); }
+    .code-viewer-toolbar .btn-group { display: flex; gap: 0.5rem; align-items: center; }
+    .code-viewer-toolbar .toolbar-btn { background: transparent; border: 1px solid var(--gray-200); padding: 0.25rem 0.75rem; border-radius: var(--radius-md); cursor: pointer; color: var(--text-secondary); font-size: 0.75rem; font-weight: 500; display: flex; align-items: center; gap: 0.25rem; transition: all 0.2s; }
+    .code-viewer-toolbar .toolbar-btn:hover { background: var(--gray-100); }
+    [data-theme="dark"] .code-viewer-toolbar .toolbar-btn { border-color: var(--gray-700); color: var(--gray-300); }
+    [data-theme="dark"] .code-viewer-toolbar .toolbar-btn:hover { background: var(--gray-700); }
+    .code-viewer-content { padding: 1rem; overflow-x: auto; font-family: monospace; font-size: 0.875rem; line-height: 1.5; white-space: pre; margin: 0; background: transparent; }
+    
+    /* Line Numbers styling */
+    .hljs-ln-numbers { text-align: right; border-right: 1px solid var(--gray-200); color: var(--gray-400); padding-right: 1rem !important; margin-right: 1rem; vertical-align: top; user-select: none; }
+    .hljs-ln-code { padding-left: 1rem !important; }
+    [data-theme="dark"] .hljs-ln-numbers { border-right-color: var(--gray-700); color: var(--gray-500); }
+    
+    /* Markdown Styles (Simple version) */
+    .markdown-body { font-family: var(--font-sans); line-height: 1.6; padding: 2rem; background: var(--white); border: 1px solid var(--gray-200); border-radius: var(--radius-lg); margin-top: 1.5rem; }
+    [data-theme="dark"] .markdown-body { background: var(--gray-800); border-color: var(--gray-700); color: var(--gray-300); }
+    .markdown-body h1, .markdown-body h2, .markdown-body h3 { border-bottom: 1px solid var(--gray-200); padding-bottom: 0.5rem; margin-top: 1.5rem; margin-bottom: 1rem; }
+    [data-theme="dark"] .markdown-body h1, [data-theme="dark"] .markdown-body h2, [data-theme="dark"] .markdown-body h3 { border-bottom-color: var(--gray-700); color: var(--gray-100); }
+    .markdown-body code { font-family: monospace; background: var(--gray-100); padding: 0.2em 0.4em; border-radius: 3px; }
+    [data-theme="dark"] .markdown-body code { background: rgba(255,255,255,0.1); color: inherit; }
+    .markdown-body pre { background: #0d1117 !important; padding: 1rem; border-radius: var(--radius-md); overflow-x: auto; margin-bottom: 1rem; }
+    .markdown-body pre code { background: transparent !important; padding: 0; color: inherit; }
+    .markdown-body p, .markdown-body ul, .markdown-body ol { margin-bottom: 1rem; }
+    .markdown-body ul { padding-left: 2rem; list-style-type: disc; }
+
+    /* Helpers */
+    .d-none { display: none !important; }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header__container">
+      <div class="header__brand">
+        <a href="index.html" class="header__logo" aria-label="Home" style="display: flex; align-items: center; justify-content: center;">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+            <rect width="32" height="32" rx="8" fill="var(--primary-500)"/>
+            <path d="M16 8L8 24H24L16 8Z" fill="white"/>
+          </svg>
+        </a>
+      </div>
+      <nav class="header__nav">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="projects.html" class="nav-link">Discovery</a>
+        <a href="about.html" class="nav-link">About</a>
+      </nav>
+      <div class="header__actions">
+        <input type="checkbox" class="theme-checkbox" id="themeToggle" aria-label="Toggle theme">
+      </div>
+    </div>
+  </header>
+
+  <div id="loadingState" class="state-container" style="padding-top: 5rem;">
+    <div class="spinner"></div>
+    <p>Loading project details...</p>
+  </div>
+  
+  <div id="errorState" class="state-container d-none" style="padding-top: 5rem;">
+    <h2 class="error-title" style="color:var(--danger);">Failed to Load Project</h2>
+    <p id="errorMessage" style="color:var(--gray-600);"></p>
+    <a href="index.html" class="btn btn--secondary" style="margin-top: 1rem;">Back to Projects</a>
+  </div>
+
+  <div id="projectContent" class="d-none">
+    <!-- Repository Header -->
+    <div class="repo-header">
+      <div class="container">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.75rem;">
+          <button id="projectBackBtn" class="btn-back" style="display: inline-flex; align-items: center; gap: 0.5rem; background: var(--bg-secondary); color: var(--text-primary); border: 1px solid var(--border-medium); padding: 0.45rem 1rem; border-radius: var(--radius-lg); font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: var(--shadow-sm);">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            <span id="backBtnLabel">Go Back</span>
+          </button>
+          
+          <div class="repo-breadcrumbs" style="margin-bottom: 0;">
+            <a href="index.html">Home</a>
+            <span style="color:var(--text-tertiary)">/</span>
+            <a href="projects.html">Projects</a>
+            <span style="color:var(--text-tertiary)">/</span>
+            <span id="breadcrumbName" style="font-weight: 500; color: var(--text-primary);">Project</span>
+          </div>
+        </div>
+        
+        <div class="repo-title-wrapper">
+          <div>
+            <h1 id="projectName">Loading...</h1>
+            <p id="projectDescription" class="repo-description"></p>
+            <div id="projectBadges" class="repo-badges"></div>
+          </div>
+          <div class="repo-actions">
+            <a href="#" id="githubBtn" target="_blank" class="btn btn--secondary d-none">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
+              </svg>
+              GitHub
+            </a>
+            <a href="#" id="downloadBtn" class="btn btn--primary d-none">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+              Download Source
+            </a>
+            <button id="copyUrlBtn" class="btn btn--secondary">Share</button>
+          </div>
+        </div>
+
+        <nav class="repo-tabs">
+          <button class="repo-tab active" data-tab="code">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+            Code
+          </button>
+          <button class="repo-tab" data-tab="readme">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            README
+          </button>
+          <button class="repo-tab" data-tab="run">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+            How to Run
+          </button>
+          <button class="repo-tab" data-tab="features">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
+            Features
+          </button>
+        </nav>
+      </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <main class="container" style="padding-bottom: 4rem;">
+      
+      <!-- Code Tab (Authentic GitHub Format) -->
+      <section id="tab-code" class="tab-pane active">
+        <div class="github-repo-container">
+          
+          <!-- GitHub Top Bar: Branch Selector & Clickable Breadcrumbs -->
+          <div class="github-topbar">
+            <div class="github-topbar-left">
+              <div class="github-branch-pill">
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+                  <path fill-rule="evenodd" d="M11.75 2.5a.75.75 0 100 1.5.75.75 0 000-1.5zm-2.25.75a2.25 2.25 0 113 2.122V6A2.5 2.5 0 0110 8.5H6a1 1 0 00-1 1v1.128a2.251 2.251 0 11-1.5 0V5.372a2.25 2.25 0 111.5 0v1.836A2.492 2.492 0 016 7h4a1 1 0 001-1v-.628A2.25 2.25 0 019.5 3.25zM4.25 12a.75.75 0 100 1.5.75.75 0 000-1.5zM3.5 3.25a.75.75 0 111.5 0 .75.75 0 01-1.5 0z"></path>
+                </svg>
+                <span>main</span>
+                <span style="font-size: 0.65rem; opacity: 0.7;">▼</span>
+              </div>
+              <nav class="github-breadcrumbs" id="githubBreadcrumbs">
+                <!-- Injected via JS -->
+              </nav>
+            </div>
+            <div id="githubTopActions">
+              <button class="github-code-btn" id="githubBackToFilesBtn" style="display: none;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                Back to file list
+              </button>
+            </div>
+          </div>
+
+          <!-- 1. DIRECTORY TABLE VIEW (GitHub File Browser) -->
+          <div id="githubDirectoryView">
+            <div class="github-card">
+              <div class="github-commit-bar">
+                <div class="github-commit-left">
+                  <span style="font-size: 1.1rem;">🎓</span>
+                  <span id="repoCommitMsg">Verified project source repository</span>
+                  <span class="github-commit-hash">latest</span>
+                </div>
+                <div id="repoFilesCount" style="font-size: 0.8rem; font-weight: 600; color: var(--text-tertiary);">
+                  Indexing source files...
+                </div>
+              </div>
+
+              <table class="github-files-table">
+                <thead>
+                  <tr>
+                    <th style="width: 40%;">Name</th>
+                    <th style="width: 45%;">Description</th>
+                    <th style="width: 15%; text-align: right;">Size</th>
+                  </tr>
+                </thead>
+                <tbody id="githubFileTableBody">
+                  <!-- Injected via JS -->
+                  <tr>
+                    <td colspan="3" style="text-align: center; padding: 2.5rem; color: var(--text-secondary);">
+                      Loading repository file structure...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Embedded README.md (Directly Below File Table) -->
+            <div class="github-readme-card" id="embeddedReadmeCard" style="margin-top: 1.5rem; display: none;">
+              <div class="github-readme-header">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                <span>README.md</span>
+              </div>
+              <div class="github-readme-body markdown-body" id="embeddedReadmeBody">
+                <!-- Rendered Markdown -->
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. CODE VIEWER VIEW (When clicking any file) -->
+          <div id="githubCodeView" style="display: none;">
+            <div class="github-code-card">
+              <div class="github-code-toolbar">
+                <div class="github-code-meta">
+                  <span id="githubActiveFileName" style="font-weight: 700; color: var(--text-primary);">file.txt</span>
+                  <span style="opacity: 0.4;">|</span>
+                  <span id="githubActiveFileMeta">0 lines · 0 KB</span>
+                </div>
+                <div class="github-code-actions">
+                  <button class="github-code-btn" id="githubRawBtn">Raw</button>
+                  <button class="github-code-btn" id="githubCopyBtn">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                    Copy
+                  </button>
+                  <button class="github-code-btn" id="githubDownloadFileBtn">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                    Download
+                  </button>
+                </div>
+              </div>
+              <pre class="github-code-pre"><code id="codeContent" class="hljs">Loading code content...</code></pre>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- README Tab -->
+      <section id="tab-readme" class="tab-pane d-none">
+        <div id="readmeContent" class="markdown-body">
+          <div style="text-align: center; padding: 3rem; color: var(--gray-500);">Loading documentation...</div>
+        </div>
+      </section>
+
+      <!-- How to Run Tab -->
+      <section id="tab-run" class="tab-pane d-none">
+        <div class="markdown-body">
+          <h2>Installation & Execution</h2>
+          <div id="howToRunContent"></div>
+        </div>
+      </section>
+
+      <!-- Features Tab -->
+      <section id="tab-features" class="tab-pane d-none">
+        <div class="markdown-body">
+          <h2>Project Features</h2>
+          <div id="featuresContent"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="js/utils.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/project.js"></script>
+  <footer class="app-footer" role="contentinfo">
+    <div class="footer-glow-line" aria-hidden="true"></div>
+    <div class="container footer-container">
+      <div class="footer-top">
+        <div class="footer-brand-section">
+          <a href="/" class="footer-brand" aria-label="Home">
+            <span class="footer-brand-text">ProjIntelligence</span>
+          </a>
+          <div class="footer-status">
+            <div class="status-badge">
+              <svg class="status-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="8" cy="8" r="3"></circle>
+                <path d="M8 1v2.5M8 12.5V15M1 8h2.5M12.5 8H15"></path>
+              </svg>
+              <span class="status-text">Global Network</span>
+              <span class="status-divider" aria-hidden="true"></span>
+              <time id="footer-local-time-detail" class="status-time">00:00</time>
+              <span class="status-tz">UTC</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="footer-grid">
+        <div class="footer-col">
+          <p class="footer-col-title">Navigation</p>
+          <ul class="footer-links" role="list">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="projects.html">Discovery</a></li>
+            <li><a href="admin.html">Admin Panel</a></li>
+          </ul>
+        </div>
+        
+        <div class="footer-col">
+          <p class="footer-col-title">Connect</p>
+          <ul class="footer-links" role="list">
+            <li><a href="https://github.com" target="_blank" rel="noopener noreferrer">GitHub <span class="external-link">↗</span></a></li>
+            <li><a href="#">Contact Support</a></li>
+          </ul>
+        </div>
+        
+        <div class="footer-col" style="grid-column: span 2;">
+          <p class="footer-col-title">Colophon</p>
+          <ul class="footer-colophon" role="list">
+            <li><span class="dot bg-blue"></span> <span>Vanilla JS & CSS Architecture</span></li>
+            <li><span class="dot bg-green"></span> <span>Flask & SQLite Backend</span></li>
+            <li><span class="dot bg-purple"></span> <span>Three.js & WebGL Visuals</span></li>
+            <li style="margin-top: 0.5rem;"><a href="#" class="source-link">Source on GitHub <span class="external-link">↗</span></a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <script>
+      function initFooterTimeDetail() {
+        const timeEl = document.getElementById('footer-local-time-detail');
+        if (!timeEl) return;
+        function update() {
+          try {
+            const now = new Date();
+            const formatter = new Intl.DateTimeFormat('en-GB', { timeZone: 'UTC', hour: '2-digit', minute: '2-digit', hour12: false });
+            timeEl.textContent = formatter.format(now);
+          } catch (_) {}
+        }
+        update();
+        setInterval(update, 30000);
+      }
+      if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', initFooterTimeDetail); }
+      else { initFooterTimeDetail(); }
+    </script>
+  </footer>
+</body>
+</html>

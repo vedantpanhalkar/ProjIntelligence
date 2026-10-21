@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Discover Student Code Projects">
+  <title>Projects Discovery - Project Intelligence</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>">
+  
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/theme.css">
+  
+  <style>
+    .discovery-layout {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: var(--space-8);
+      align-items: start;
+    }
+    
+    @media (max-width: 900px) {
+      .discovery-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .filter-panel {
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-xl);
+      padding: var(--space-6);
+      position: sticky;
+      top: calc(var(--header-height) + var(--space-8));
+    }
+
+    [data-theme="dark"] .filter-panel {
+      background: var(--gray-900);
+      border-color: var(--gray-800);
+    }
+    
+    .filter-group {
+      margin-bottom: var(--space-6);
+    }
+    
+    .filter-group:last-child {
+      margin-bottom: 0;
+    }
+
+    .filter-label {
+      display: block;
+      font-size: var(--text-sm);
+      font-weight: var(--weight-bold);
+      color: var(--gray-900);
+      margin-bottom: var(--space-2);
+    }
+    
+    [data-theme="dark"] .filter-label { color: var(--white); }
+
+    .filter-select, .search-input {
+      width: 100%;
+      padding: var(--space-2) var(--space-3);
+      border: 1px solid var(--gray-300);
+      border-radius: var(--radius-md);
+      background: var(--white);
+      color: var(--gray-900);
+    }
+    
+    [data-theme="dark"] .filter-select,
+    [data-theme="dark"] .search-input {
+      background: var(--gray-800);
+      border-color: var(--gray-700);
+      color: var(--white);
+    }
+
+    .search-input {
+      margin-bottom: var(--space-4);
+    }
+
+    .projects-area {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-6);
+    }
+
+    .results-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--white);
+      padding: var(--space-4) var(--space-6);
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--gray-200);
+    }
+
+    [data-theme="dark"] .results-header {
+      background: var(--gray-900);
+      border-color: var(--gray-800);
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header__container">
+      <div class="header__brand">
+        <svg class="header__logo" width="32" height="32" viewBox="0 0 32 32" fill="none">
+          <rect width="32" height="32" rx="8" fill="var(--primary-500)"/>
+          <path d="M16 8L8 24H24L16 8Z" fill="white"/>
+        </svg>
+        <h1 class="header__title">Project Intelligence</h1>
+      </div>
+      <nav class="header__nav">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="projects.html" class="nav-link nav-link--active">Discovery</a>
+        <a href="about.html" class="nav-link">About</a>
+      </nav>
+      <div class="header__actions">
+        <input type="checkbox" class="theme-checkbox" id="themeToggle" aria-label="Toggle theme">
+        <a href="admin.html" class="btn btn--outline" id="loginBtn">Admin Login</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="main container">
+    <div class="discovery-layout">
+      <!-- Filter Panel -->
+      <aside class="filter-panel">
+        <div class="filter-group">
+          <input type="search" id="searchInput" class="search-input" placeholder="Search projects...">
+        </div>
+        
+        <div class="filter-group">
+          <label for="languageFilter" class="filter-label">Language</label>
+          <select id="languageFilter" class="filter-select">
+            <option value="">All Languages</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label for="categoryFilter" class="filter-label">Category</label>
+          <select id="categoryFilter" class="filter-select">
+            <option value="">All Categories</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label for="gradeFilter" class="filter-label">Health Grade</label>
+          <select id="gradeFilter" class="filter-select">
+            <option value="">All Grades</option>
+            <option value="A+">A+</option>
+            <option value="A">A</option>
+            <option value="B+">B+</option>
+            <option value="B">B</option>
+            <option value="C">C</option>
+            <option value="D">D</option>
+            <option value="F">F</option>
+          </select>
+        </div>
+
+        <button class="btn btn--secondary" id="resetFilters" style="width: 100%; margin-top: var(--space-4);">
+          Reset Filters
+        </button>
+      </aside>
+
+      <!-- Projects Grid Area -->
+      <div class="projects-area">
+        <div class="results-header">
+          <div>
+            <h2 class="results-title" id="resultsTitle" style="margin:0; font-size: 1.25rem;">All Projects</h2>
+            <span class="results-count" id="resultsCount" style="color: var(--gray-500); font-size: 0.875rem;">Loading...</span>
+          </div>
+          <div style="display:flex; align-items:center; gap:0.5rem;">
+            <label for="sortBy" style="font-size: 0.875rem; color: var(--gray-600);">Sort By:</label>
+            <select id="sortBy" class="filter-select" style="width: auto;">
+              <option value="health_score">Health Score</option>
+              <option value="created_at">Recently Added</option>
+              <option value="name">Name (A-Z)</option>
+              <option value="stars">Most Stars</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="projects-grid" id="projectsGrid">
+          <!-- Skeletons -->
+          <div class="project-card skeleton"><div class="skeleton-header"></div><div class="skeleton-text"></div></div>
+          <div class="project-card skeleton"><div class="skeleton-header"></div><div class="skeleton-text"></div></div>
+          <div class="project-card skeleton"><div class="skeleton-header"></div><div class="skeleton-text"></div></div>
+        </div>
+
+        <!-- Empty & Error States -->
+        <div class="empty-state" id="emptyState" style="display: none; padding: 4rem 0;">
+          <h3>No projects found</h3>
+          <p>Try adjusting your search or filters.</p>
+          <button class="btn btn--primary" id="resetFromEmpty">Clear Filters</button>
+        </div>
+
+        <div class="error-state" id="errorState" style="display: none; padding: 4rem 0;">
+          <h3 style="color: #ef4444;">Failed to load projects</h3>
+          <p id="errorMessage">Please try again later</p>
+          <button class="btn btn--primary" id="retryLoad">Retry</button>
+        </div>
+
+        <div class="pagination" id="pagination" style="display: none;">
+          <button class="btn btn--outline" id="prevPage" disabled>Previous</button>
+          <div id="paginationPages" style="display: flex; gap: 0.25rem;"></div>
+          <button class="btn btn--outline" id="nextPage">Next</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/utils.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/components.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script>
+    // Query param initialization for search & category from Hero Section
+    document.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const q = urlParams.get('q');
+      const category = urlParams.get('category');
+      
+      const app = window.dashboardApp || window.app;
+      if (q) {
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput) searchInput.value = q;
+        if (app && app.state) {
+          app.state.searchQuery = q;
+          if (typeof app.loadProjects === 'function') {
+            app.loadProjects();
+          }
+        }
+      }
+      
+      if (category) {
+        setTimeout(() => {
+          const categoryFilter = document.getElementById('categoryFilter');
+          if (categoryFilter) categoryFilter.value = category;
+          const currentApp = window.dashboardApp || window.app;
+          if (currentApp && typeof currentApp.handleFilterChange === 'function') {
+            currentApp.handleFilterChange('category', category);
+          }
+        }, 300);
+      }
+    });
+  </script>
+  <footer class="app-footer" role="contentinfo">
+    <div class="footer-glow-line" aria-hidden="true"></div>
+    <div class="container footer-container">
+      <div class="footer-top">
+        <div class="footer-brand-section">
+          <a href="/" class="footer-brand" aria-label="Home">
+            <span class="footer-brand-text">ProjIntelligence</span>
+          </a>
+          <div class="footer-status">
+            <div class="status-badge">
+              <svg class="status-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="8" cy="8" r="3"></circle>
+                <path d="M8 1v2.5M8 12.5V15M1 8h2.5M12.5 8H15"></path>
+              </svg>
+              <span class="status-text">Global Network</span>
+              <span class="status-divider" aria-hidden="true"></span>
+              <time id="footer-local-time-projects" class="status-time">00:00</time>
+              <span class="status-tz">UTC</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="footer-grid">
+        <div class="footer-col">
+          <p class="footer-col-title">Navigation</p>
+          <ul class="footer-links" role="list">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="projects.html">Discovery</a></li>
+            <li><a href="admin.html">Admin Panel</a></li>
+          </ul>
+        </div>
+        
+        <div class="footer-col">
+          <p class="footer-col-title">Connect</p>
+          <ul class="footer-links" role="list">
+            <li><a href="https://github.com" target="_blank" rel="noopener noreferrer">GitHub <span class="external-link">↗</span></a></li>
+            <li><a href="#">Contact Support</a></li>
+          </ul>
+        </div>
+        
+        <div class="footer-col" style="grid-column: span 2;">
+          <p class="footer-col-title">Colophon</p>
+          <ul class="footer-colophon" role="list">
+            <li><span class="dot bg-blue"></span> <span>Vanilla JS & CSS Architecture</span></li>
+            <li><span class="dot bg-green"></span> <span>Flask & SQLite Backend</span></li>
+            <li><span class="dot bg-purple"></span> <span>Three.js & WebGL Visuals</span></li>
+            <li style="margin-top: 0.5rem;"><a href="#" class="source-link">Source on GitHub <span class="external-link">↗</span></a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <script>
+      function initFooterTimeProjects() {
+        const timeEl = document.getElementById('footer-local-time-projects');
+        if (!timeEl) return;
+        function update() {
+          try {
+            const now = new Date();
+            const formatter = new Intl.DateTimeFormat('en-GB', { timeZone: 'UTC', hour: '2-digit', minute: '2-digit', hour12: false });
+            timeEl.textContent = formatter.format(now);
+          } catch (_) {}
+        }
+        update();
+        setInterval(update, 30000);
+      }
+      if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', initFooterTimeProjects); }
+      else { initFooterTimeProjects(); }
+    </script>
+  </footer>
+</body>
+</html>

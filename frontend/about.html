@@ -1,0 +1,1387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About - Student Project Intelligence Platform</title>
+  <meta name="description" content="Discover how Project Intelligence analyzes, verifies, and showcases student engineering breakthroughs worldwide.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/theme.css">
+  
+  <style>
+    /* =========================================================================
+       PAGE SYSTEM & CUSTOM FOLLOWER
+       ========================================================================= */
+    :root {
+      --hero-accent-cyan: #06b6d4;
+      --hero-accent-purple: #8b5cf6;
+      --hero-accent-blue: #3b82f6;
+    }
+
+    /* Ambient cursor aura follower (non-blocking) */
+    .cursor-aura {
+      position: fixed;
+      top: 0; left: 0;
+      width: 320px; height: 320px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, rgba(139, 92, 246, 0.08) 35%, transparent 70%);
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+      z-index: 9999;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      mix-blend-mode: screen;
+    }
+    body:hover .cursor-aura {
+      opacity: 1;
+    }
+
+    /* =========================================================================
+       ABOUT HERO SECTION
+       ========================================================================= */
+    .about-hero {
+      position: relative;
+      background: #030712;
+      color: #ffffff;
+      padding: 7rem var(--space-4) 5.5rem;
+      overflow: hidden;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    /* Canvas background layer */
+    .about-hero__canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      pointer-events: none;
+      display: block;
+    }
+
+    /* Subtle ambient CSS glow behind canvas */
+    .about-hero__glow {
+      position: absolute;
+      top: 20%;
+      left: 50%;
+      transform: translate(-50%, -30%);
+      width: 800px;
+      height: 400px;
+      background: radial-gradient(ellipse at center, rgba(59, 130, 246, 0.22) 0%, rgba(139, 92, 246, 0.15) 40%, transparent 75%);
+      filter: blur(60px);
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .about-hero__container {
+      position: relative;
+      z-index: 2;
+      max-width: 960px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .about-hero__pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.625rem;
+      padding: 0.35rem 1rem;
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: var(--radius-full);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #e2e8f0;
+      margin-bottom: 1.75rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      animation: heroFadeDown 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .about-hero__pill-dot {
+      width: 8px;
+      height: 8px;
+      background: #10b981;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #10b981;
+      animation: pulse 2s infinite;
+    }
+
+    .about-hero__title {
+      font-size: clamp(2.5rem, 5.5vw, 4.75rem);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      margin-bottom: 1.5rem;
+      color: #ffffff;
+      animation: heroFadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    .about-hero__title-gradient {
+      background: linear-gradient(135deg, #ffffff 15%, #93c5fd 55%, #c084fc 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: inline-block;
+    }
+
+    .about-hero__subtitle {
+      font-size: clamp(1.05rem, 2vw, 1.3rem);
+      line-height: 1.6;
+      color: rgba(241, 245, 249, 0.82);
+      max-width: 680px;
+      margin: 0 auto 2.5rem;
+      animation: heroFadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    .about-hero__actions {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 3.5rem;
+      animation: heroFadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    .hero-btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.85rem 1.75rem;
+      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+      color: #ffffff;
+      font-weight: 600;
+      font-size: 0.95rem;
+      border-radius: var(--radius-full);
+      text-decoration: none;
+      box-shadow: 0 4px 20px rgba(37, 99, 235, 0.45);
+      transition: all 0.25s ease;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .hero-btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(37, 99, 235, 0.6);
+      color: #ffffff;
+    }
+
+    .hero-btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.85rem 1.75rem;
+      background: rgba(255, 255, 255, 0.06);
+      color: #e2e8f0;
+      font-weight: 600;
+      font-size: 0.95rem;
+      border-radius: var(--radius-full);
+      text-decoration: none;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      transition: all 0.25s ease;
+    }
+    .hero-btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.3);
+      color: #ffffff;
+      transform: translateY(-2px);
+    }
+
+    /* Live telemetry stat bar in hero */
+    .about-hero__stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.25rem;
+      padding: 1.5rem 2rem;
+      background: rgba(15, 23, 42, 0.65);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: var(--radius-2xl);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 12px 35px -10px rgba(0, 0, 0, 0.6);
+      animation: heroFadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.4s forwards;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+    .stat-item__value {
+      font-size: clamp(1.4rem, 2.5vw, 2rem);
+      font-weight: 800;
+      color: #ffffff;
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+      margin-bottom: 0.3rem;
+      background: linear-gradient(135deg, #ffffff 40%, #93c5fd 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .stat-item__label {
+      font-size: 0.785rem;
+      font-weight: 600;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    @keyframes heroFadeDown {
+      from { opacity: 0; transform: translateY(-15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes heroFadeUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.85); }
+    }
+
+    @media (max-width: 768px) {
+      .about-hero {
+        padding: 5.5rem var(--space-4) 4rem;
+      }
+      .about-hero__stats {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+        padding: 1.25rem;
+      }
+    }
+    @media (max-width: 480px) {
+      .about-hero__stats {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* =========================================================================
+       BENTO GRID SYSTEM (SUPERIOR MODERN TECH UI)
+       ========================================================================= */
+    .bento-section {
+      padding: 5rem 0 3rem;
+    }
+
+    .section-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.8125rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--primary-500);
+      margin-bottom: 0.75rem;
+    }
+    [data-theme="dark"] .section-eyebrow {
+      color: #60a5fa;
+    }
+
+    .section-headline {
+      font-size: clamp(2rem, 3.5vw, 2.75rem);
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      color: var(--text-primary);
+      margin-bottom: 1rem;
+      line-height: 1.2;
+    }
+
+    .section-lead {
+      font-size: 1.125rem;
+      color: var(--text-secondary);
+      max-width: 620px;
+      margin-bottom: 3rem;
+      line-height: 1.6;
+    }
+
+    .bento-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 1.75rem;
+      margin-bottom: 5rem;
+    }
+
+    /* Bento Card Base */
+    .bento-card {
+      position: relative;
+      background: var(--card-bg);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-2xl);
+      padding: 2.25rem;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), 
+                  box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1), 
+                  border-color 0.3s ease;
+    }
+
+    [data-theme="dark"] .bento-card {
+      background: rgba(30, 41, 59, 0.65);
+      border-color: rgba(255, 255, 255, 0.08);
+      box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    /* Mouse Glow on Cards */
+    .bento-card::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: radial-gradient(450px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(59, 130, 246, 0.12), transparent 60%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+      z-index: 1;
+    }
+    .bento-card:hover::after {
+      opacity: 1;
+    }
+
+    .bento-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 40px -15px rgba(59, 130, 246, 0.18);
+      border-color: rgba(59, 130, 246, 0.35);
+    }
+
+    /* Card Spans */
+    .bento-span-8 { grid-column: span 8; }
+    .bento-span-4 { grid-column: span 4; }
+    .bento-span-6 { grid-column: span 6; }
+    .bento-span-12 { grid-column: span 12; }
+
+    @media (max-width: 1024px) {
+      .bento-span-8 { grid-column: span 12; }
+      .bento-span-4 { grid-column: span 6; }
+      .bento-span-6 { grid-column: span 12; }
+    }
+    @media (max-width: 768px) {
+      .bento-span-4 { grid-column: span 12; }
+      .bento-card { padding: 1.75rem; }
+    }
+
+    /* Card Elements */
+    .bento-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.375rem;
+      padding: 0.25rem 0.65rem;
+      border-radius: var(--radius-full);
+      font-size: 0.725rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      background: rgba(59, 130, 246, 0.1);
+      color: #2563eb;
+      border: 1px solid rgba(59, 130, 246, 0.2);
+      margin-bottom: 1.25rem;
+      width: fit-content;
+      position: relative;
+      z-index: 2;
+    }
+    [data-theme="dark"] .bento-badge {
+      color: #60a5fa;
+      background: rgba(59, 130, 246, 0.15);
+      border-color: rgba(96, 165, 250, 0.25);
+    }
+
+    .bento-badge--emerald {
+      background: rgba(16, 185, 129, 0.1);
+      color: #059669;
+      border-color: rgba(16, 185, 129, 0.2);
+    }
+    [data-theme="dark"] .bento-badge--emerald {
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      border-color: rgba(52, 211, 153, 0.25);
+    }
+
+    .bento-badge--purple {
+      background: rgba(139, 92, 246, 0.1);
+      color: #7c3aed;
+      border-color: rgba(139, 92, 246, 0.2);
+    }
+    [data-theme="dark"] .bento-badge--purple {
+      background: rgba(139, 92, 246, 0.15);
+      color: #a78bfa;
+      border-color: rgba(167, 139, 250, 0.25);
+    }
+
+    .bento-header {
+      position: relative;
+      z-index: 2;
+    }
+
+    .bento-icon-box {
+      width: 3.25rem;
+      height: 3.25rem;
+      border-radius: var(--radius-xl);
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(139, 92, 246, 0.1));
+      border: 1px solid rgba(59, 130, 246, 0.25);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      margin-bottom: 1.25rem;
+      transition: transform 0.3s ease;
+    }
+    .bento-card:hover .bento-icon-box {
+      transform: scale(1.08) rotate(3deg);
+    }
+
+    .bento-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 0.75rem;
+      letter-spacing: -0.02em;
+      line-height: 1.25;
+    }
+
+    .bento-desc {
+      color: var(--text-secondary);
+      font-size: 0.975rem;
+      line-height: 1.6;
+      margin-bottom: 1.75rem;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Embedded Terminal / Code Inspector Widget (Card 1) */
+    .terminal-mockup {
+      background: #090d16;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: var(--radius-lg);
+      padding: 1.15rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8125rem;
+      color: #e2e8f0;
+      box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.4);
+      position: relative;
+      z-index: 2;
+    }
+
+    .terminal-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.875rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .terminal-dots {
+      display: flex;
+      gap: 0.35rem;
+    }
+    .terminal-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+    }
+    .dot-red { background: #ef4444; }
+    .dot-yellow { background: #f59e0b; }
+    .dot-green { background: #10b981; }
+
+    .terminal-file {
+      color: #94a3b8;
+      font-size: 0.75rem;
+    }
+    .terminal-line {
+      display: flex;
+      gap: 0.75rem;
+      line-height: 1.7;
+    }
+    .t-token-kw { color: #f43f5e; }
+    .t-token-fn { color: #60a5fa; }
+    .t-token-str { color: #34d399; }
+    .t-token-comment { color: #64748b; font-style: italic; }
+    .t-badge-verified {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      background: rgba(16, 185, 129, 0.2);
+      color: #34d399;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-top: 0.5rem;
+    }
+
+    /* Embedded Health Progress Meters (Card 2) */
+    .radar-meters {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem;
+      position: relative;
+      z-index: 2;
+    }
+    .meter-row {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+    .meter-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .meter-bar {
+      height: 7px;
+      background: rgba(148, 163, 184, 0.2);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .meter-fill {
+      height: 100%;
+      border-radius: 99px;
+      transition: width 1s ease-out;
+    }
+    .fill-green { background: linear-gradient(90deg, #10b981, #34d399); }
+    .fill-blue { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+    .fill-purple { background: linear-gradient(90deg, #8b5cf6, #c084fc); }
+
+    /* Cryptographic Fingerprint Box (Card 3) */
+    .crypto-fingerprint {
+      background: #090d16;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: var(--radius-lg);
+      padding: 1rem 1.15rem;
+      position: relative;
+      z-index: 2;
+    }
+    .crypto-chip {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+    }
+    .crypto-hash {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: #94a3b8;
+      word-break: break-all;
+    }
+    .crypto-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      color: #34d399;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-top: 0.5rem;
+    }
+
+    /* University Chips Cloud (Card 4) */
+    .uni-cloud {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      position: relative;
+      z-index: 2;
+    }
+    .uni-pill {
+      font-size: 0.775rem;
+      font-weight: 600;
+      padding: 0.35rem 0.75rem;
+      border-radius: var(--radius-full);
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-light);
+      color: var(--text-primary);
+      transition: all 0.2s ease;
+    }
+    .uni-pill:hover {
+      background: rgba(59, 130, 246, 0.15);
+      border-color: rgba(59, 130, 246, 0.4);
+      color: #2563eb;
+      transform: translateY(-2px);
+    }
+    [data-theme="dark"] .uni-pill:hover {
+      color: #60a5fa;
+    }
+
+    /* Edge Infra Specs (Card 5) */
+    .edge-specs {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.75rem;
+      position: relative;
+      z-index: 2;
+    }
+    .edge-spec-item {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      padding: 0.75rem;
+      text-align: center;
+    }
+    .edge-spec-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      font-size: 1.15rem;
+      color: var(--primary-500);
+    }
+    [data-theme="dark"] .edge-spec-num {
+      color: #60a5fa;
+    }
+    .edge-spec-lbl {
+      font-size: 0.725rem;
+      color: var(--text-secondary);
+      margin-top: 0.2rem;
+    }
+
+    /* =========================================================================
+       3-STEP PIPELINE ARCHITECTURE SECTION
+       ========================================================================= */
+    .pipeline-section {
+      padding: 4rem 0 5rem;
+      border-top: 1px solid var(--border-light);
+    }
+
+    .pipeline-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+      position: relative;
+    }
+
+    .pipeline-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-xl);
+      padding: 2.25rem 2rem;
+      position: relative;
+      transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    .pipeline-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(59, 130, 246, 0.4);
+      box-shadow: 0 15px 30px -10px rgba(59, 130, 246, 0.12);
+    }
+
+    .pipeline-step-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 3rem;
+      font-weight: 800;
+      line-height: 1;
+      margin-bottom: 1.25rem;
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.4) 0%, rgba(139, 92, 246, 0.2) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .pipeline-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 0.75rem;
+    }
+    .pipeline-desc {
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    @media (max-width: 900px) {
+      .pipeline-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* =========================================================================
+       CALL TO ACTION (CTA)
+       ========================================================================= */
+    .about-cta {
+      position: relative;
+      background: linear-gradient(135deg, #090e1a 0%, #1e1b4b 50%, #090e1a 100%);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: var(--radius-2xl);
+      padding: 4.5rem 2.5rem;
+      text-align: center;
+      color: #ffffff;
+      overflow: hidden;
+      margin-bottom: 6rem;
+      box-shadow: 0 20px 45px -15px rgba(0, 0, 0, 0.7);
+    }
+    .about-cta__glow {
+      position: absolute;
+      top: -50%; left: 50%;
+      transform: translateX(-50%);
+      width: 600px; height: 350px;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.35) 0%, transparent 70%);
+      filter: blur(50px);
+      pointer-events: none;
+    }
+    .about-cta__title {
+      font-size: clamp(2rem, 3.5vw, 3rem);
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      margin-bottom: 1.25rem;
+      position: relative;
+      z-index: 2;
+    }
+    .about-cta__desc {
+      font-size: 1.15rem;
+      color: rgba(241, 245, 249, 0.85);
+      max-width: 600px;
+      margin: 0 auto 2.5rem;
+      position: relative;
+      z-index: 2;
+      line-height: 1.6;
+    }
+    .about-cta__buttons {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1.25rem;
+      flex-wrap: wrap;
+      position: relative;
+      z-index: 2;
+    }
+  </style>
+</head>
+<body>
+  <!-- Ambient non-intrusive cursor aura follower -->
+  <div class="cursor-aura" id="cursorAura" aria-hidden="true"></div>
+
+  <!-- Main Navigation Header -->
+  <header class="header">
+    <div class="header__container">
+      <div class="header__brand">
+        <svg class="header__logo" width="32" height="32" viewBox="0 0 32 32" fill="none">
+          <rect width="32" height="32" rx="8" fill="var(--primary-500)"/>
+          <path d="M16 8L8 24H24L16 8Z" fill="white"/>
+        </svg>
+        <h1 class="header__title">Project Intelligence</h1>
+      </div>
+      <nav class="header__nav">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="projects.html" class="nav-link">Discovery</a>
+        <a href="about.html" class="nav-link nav-link--active">About</a>
+      </nav>
+      <div class="header__actions">
+        <input type="checkbox" class="theme-checkbox" id="themeToggle" aria-label="Toggle theme">
+        <a href="admin.html" class="btn btn--outline" id="loginBtn">Admin Login</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ABOUT HERO SECTION WITH THREE.JS CHROMATIC WEBGL WAVE -->
+  <section class="about-hero" id="heroSection">
+    <div class="about-hero__glow" aria-hidden="true"></div>
+    <canvas id="heroCanvas" class="about-hero__canvas"></canvas>
+
+    <div class="about-hero__container">
+      <div class="about-hero__pill">
+        <span class="about-hero__pill-dot"></span>
+        <span>Student Project Intelligence Platform · v2.4</span>
+      </div>
+
+      <h1 class="about-hero__title">
+        Empowering the Next<br>
+        <span class="about-hero__title-gradient">Generation of Code.</span>
+      </h1>
+
+      <p class="about-hero__subtitle">
+        We are building the definitive intelligence platform to analyze, verify, and celebrate student-led software engineering and breakthroughs from universities worldwide.
+      </p>
+
+      <div class="about-hero__actions">
+        <a href="projects.html" class="hero-btn-primary">
+          <span>Explore Projects</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </a>
+        <a href="#pipeline" class="hero-btn-secondary">
+          <span>See How It Works</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </a>
+      </div>
+
+      <!-- Live Platform Telemetry Bar -->
+      <div class="about-hero__stats">
+        <div class="stat-item">
+          <div class="stat-item__value">14,800+</div>
+          <div class="stat-item__label">Repositories Indexed</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-item__value">480+</div>
+          <div class="stat-item__label">Universities</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-item__value">99.4%</div>
+          <div class="stat-item__label">Verification Confidence</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-item__value">&lt; 250ms</div>
+          <div class="stat-item__label">AST Parsing Latency</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAIN CONTENT CONTAINER -->
+  <main class="main container">
+    
+    <!-- MODERN BENTO GRID (TECH INTELLIGENCE SPEC) -->
+    <section class="bento-section">
+      <div class="section-eyebrow">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+        </svg>
+        <span>Platform Architecture</span>
+      </div>
+      <h2 class="section-headline">Engineered for Transparency &amp; Real Code Proof</h2>
+      <p class="section-lead">Beyond static resumes and surface-level portfolio sites. Our platform evaluates real syntax trees, Git telemetry, and architectural originality.</p>
+
+      <div class="bento-grid">
+        
+        <!-- CARD 1: Large Manifesto + Live AST Stream (Span 8) -->
+        <article class="bento-card bento-span-8 interactive-card">
+          <div class="bento-header">
+            <span class="bento-badge">Manifesto &amp; Mission</span>
+            <div class="bento-icon-box">🚀</div>
+            <h3 class="bento-title">Turning Raw Commits into Verified Engineering Proof</h3>
+            <p class="bento-desc">Traditional hiring and academic evaluation depend on resumes that anyone can polish. We believe every commit, every AST branch, and every line of code tells the real story. Our platform extracts these insights to celebrate genuine student capability.</p>
+          </div>
+
+          <!-- Code DNA Inspector Widget -->
+          <div class="terminal-mockup">
+            <div class="terminal-bar">
+              <div class="terminal-dots">
+                <span class="terminal-dot dot-red"></span>
+                <span class="terminal-dot dot-yellow"></span>
+                <span class="terminal-dot dot-green"></span>
+              </div>
+              <span class="terminal-file">engine/ast_inspector.py &bull; Verified AST v2</span>
+            </div>
+            <div class="terminal-line">
+              <span class="t-token-kw">def</span> <span class="t-token-fn">analyze_repository_dna</span>(repo_tree):
+            </div>
+            <div class="terminal-line" style="padding-left: 1.25rem;">
+              <span class="t-token-comment"># Parse AST nodes &amp; verify authorship signature</span>
+            </div>
+            <div class="terminal-line" style="padding-left: 1.25rem;">
+              metrics = tree_sitter.<span class="t-token-fn">extract_cyclomatic_flow</span>(repo_tree)
+            </div>
+            <div class="terminal-line" style="padding-left: 1.25rem;">
+              <span class="t-token-kw">return</span> { <span class="t-token-str">"authenticity"</span>: <span class="t-token-kw">0.994</span>, <span class="t-token-str">"grade"</span>: <span class="t-token-str">"A+"</span> }
+            </div>
+            <div class="t-badge-verified">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              <span>AST Structure Verified &bull; Zero Hallucination Signature</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- CARD 2: Deep AST & Health Radar (Span 4) -->
+        <article class="bento-card bento-span-4 interactive-card">
+          <div class="bento-header">
+            <span class="bento-badge bento-badge--purple">Neural Core</span>
+            <div class="bento-icon-box">🧠</div>
+            <h3 class="bento-title">Deep AST Syntax Parsing</h3>
+            <p class="bento-desc">Language-agnostic AST evaluation across C++, Python, TypeScript, Rust, and Go to calculate modularity and resilience.</p>
+          </div>
+
+          <!-- Real-time Health Radar Progress Bars -->
+          <div class="radar-meters">
+            <div class="meter-row">
+              <div class="meter-meta">
+                <span>Code Health Grade</span>
+                <span style="color: #10b981;">A+ (96/100)</span>
+              </div>
+              <div class="meter-bar">
+                <div class="meter-fill fill-green" style="width: 96%;"></div>
+              </div>
+            </div>
+
+            <div class="meter-row">
+              <div class="meter-meta">
+                <span>Architectural Modularity</span>
+                <span style="color: #3b82f6;">94%</span>
+              </div>
+              <div class="meter-bar">
+                <div class="meter-fill fill-blue" style="width: 94%;"></div>
+              </div>
+            </div>
+
+            <div class="meter-row">
+              <div class="meter-meta">
+                <span>Test &amp; Resilience Score</span>
+                <span style="color: #8b5cf6;">91%</span>
+              </div>
+              <div class="meter-bar">
+                <div class="meter-fill fill-purple" style="width: 91%;"></div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- CARD 3: Plagiarism & Verification Defense (Span 4) -->
+        <article class="bento-card bento-span-4 interactive-card">
+          <div class="bento-header">
+            <span class="bento-badge bento-badge--emerald">Academic Integrity</span>
+            <div class="bento-icon-box">🛡️</div>
+            <h3 class="bento-title">99.9% Anti-Plagiarism Engine</h3>
+            <p class="bento-desc">Tree-isomorphism and n-gram hash comparisons detect cloned code and authenticate original student authorship.</p>
+          </div>
+
+          <div class="crypto-fingerprint">
+            <div class="crypto-chip">
+              <span style="color: #94a3b8; font-size: 0.75rem;">SHA-256 Code Hash</span>
+              <span class="badge badge--success" style="font-size: 0.7rem;">Verified</span>
+            </div>
+            <div class="crypto-hash">sha256:d8a17f4...89e2c91</div>
+            <div class="crypto-status">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+              </svg>
+              <span>100% Original AST Flow &bull; Clean Match</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- CARD 4: Global University Network (Span 4) -->
+        <article class="bento-card bento-span-4 interactive-card">
+          <div class="bento-header">
+            <span class="bento-badge">Global Graph</span>
+            <div class="bento-icon-box">🌐</div>
+            <h3 class="bento-title">480+ Global Institutions</h3>
+            <p class="bento-desc">Connecting university departments, hackathon winners, and open-source contributors across 40+ countries.</p>
+          </div>
+
+          <div class="uni-cloud">
+            <span class="uni-pill">MIT</span>
+            <span class="uni-pill">Stanford</span>
+            <span class="uni-pill">IIT Delhi</span>
+            <span class="uni-pill">Oxford</span>
+            <span class="uni-pill">ETH Z&uuml;rich</span>
+            <span class="uni-pill">UC Berkeley</span>
+            <span class="uni-pill">NUS Singapore</span>
+            <span class="uni-pill">Tsinghua</span>
+            <span class="uni-pill">+470 more</span>
+          </div>
+        </article>
+
+        <!-- CARD 5: Edge Infrastructure (Span 4) -->
+        <article class="bento-card bento-span-4 interactive-card">
+          <div class="bento-header">
+            <span class="bento-badge bento-badge--purple">Lightning Fast</span>
+            <div class="bento-icon-box">⚡</div>
+            <h3 class="bento-title">Sub-50ms Edge Search</h3>
+            <p class="bento-desc">Vector embeddings indexed with FAISS and SQLite edge nodes allow instant discovery across millions of lines of code.</p>
+          </div>
+
+          <div class="edge-specs">
+            <div class="edge-spec-item">
+              <div class="edge-spec-num">&lt; 18ms</div>
+              <div class="edge-spec-lbl">Edge Latency</div>
+            </div>
+            <div class="edge-spec-item">
+              <div class="edge-spec-num">FAISS</div>
+              <div class="edge-spec-lbl">Vector Embeddings</div>
+            </div>
+            <div class="edge-spec-item">
+              <div class="edge-spec-num">SQLite</div>
+              <div class="edge-spec-lbl">Zero-Config DB</div>
+            </div>
+            <div class="edge-spec-item">
+              <div class="edge-spec-num">WebGL</div>
+              <div class="edge-spec-lbl">GPU Telemetry</div>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- PIPELINE ARCHITECTURE (HOW IT WORKS) -->
+    <section class="pipeline-section" id="pipeline">
+      <div class="section-eyebrow">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="6" y1="3" x2="6" y2="15"></line>
+          <circle cx="18" cy="6" r="3"></circle>
+          <circle cx="6" cy="18" r="3"></circle>
+          <path d="M18 9a9 9 0 0 1-9 9"></path>
+        </svg>
+        <span>Workflow &amp; Verification</span>
+      </div>
+      <h2 class="section-headline">How Project Intelligence Evaluates Repositories</h2>
+      <p class="section-lead">A fully automated, 3-tier pipeline from Git commit ingestion to certified public proof.</p>
+
+      <div class="pipeline-grid">
+        <div class="pipeline-card">
+          <div class="pipeline-step-num">01</div>
+          <h3 class="pipeline-title">Repository Telemetry Ingestion</h3>
+          <p class="pipeline-desc">Direct synchronization with GitHub, GitLab, and local university archives. We pull commit history, contribution distributions, issue resolutions, and raw code trees.</p>
+        </div>
+
+        <div class="pipeline-card">
+          <div class="pipeline-step-num">02</div>
+          <h3 class="pipeline-title">Multi-Layer AST Parsing</h3>
+          <p class="pipeline-desc">Our tree-sitter engine parses code into structural trees. Algorithms check code health, cyclomatic complexity, test coverage, and verify against plagiarism databases.</p>
+        </div>
+
+        <div class="pipeline-card">
+          <div class="pipeline-step-num">03</div>
+          <h3 class="pipeline-title">Global Discovery &amp; Scorecard</h3>
+          <p class="pipeline-desc">Each verified project receives an authentic scorecard (Grades A+ to F), verified tags, and becomes discoverable by engineering hiring leads and research labs globally.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- CALL TO ACTION (CTA) -->
+    <section class="about-cta">
+      <div class="about-cta__glow" aria-hidden="true"></div>
+      <h2 class="about-cta__title">Ready to Discover Breakthrough Innovations?</h2>
+      <p class="about-cta__desc">Explore hundreds of verified student projects or authenticate your own university project today.</p>
+      <div class="about-cta__buttons">
+        <a href="projects.html" class="hero-btn-primary" style="padding: 0.95rem 2.25rem; font-size: 1rem;">
+          <span>Browse All Projects</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </a>
+        <a href="index.html#tech-section" class="hero-btn-secondary" style="padding: 0.95rem 2.25rem; font-size: 1rem;">
+          <span>Explore Tech Radar</span>
+        </a>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- APP FOOTER -->
+  <footer class="app-footer" role="contentinfo">
+    <div class="footer-glow-line" aria-hidden="true"></div>
+    <div class="container footer-container">
+      <div class="footer-top">
+        <div class="footer-brand-section">
+          <a href="index.html" class="footer-brand" aria-label="Home">
+            <span class="footer-brand-text">ProjIntelligence</span>
+          </a>
+          <div class="footer-status">
+            <div class="status-badge">
+              <svg class="status-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="8" cy="8" r="3"></circle>
+                <path d="M8 1v2.5M8 12.5V15M1 8h2.5M12.5 8H15"></path>
+              </svg>
+              <span class="status-text">Global Network</span>
+              <span class="status-divider" aria-hidden="true"></span>
+              <time id="footer-local-time-about" class="status-time">00:00</time>
+              <span class="status-tz">UTC</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="footer-grid">
+        <div class="footer-col">
+          <p class="footer-col-title">Navigation</p>
+          <ul class="footer-links" role="list">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="projects.html">Discovery</a></li>
+            <li><a href="about.html">About Platform</a></li>
+            <li><a href="admin.html">Admin Panel</a></li>
+          </ul>
+        </div>
+        
+        <div class="footer-col">
+          <p class="footer-col-title">Connect</p>
+          <ul class="footer-links" role="list">
+            <li><a href="https://github.com" target="_blank" rel="noopener noreferrer">GitHub <span class="external-link">↗</span></a></li>
+            <li><a href="mailto:support@projectintelligence.edu">Contact Support</a></li>
+          </ul>
+        </div>
+        
+        <div class="footer-col" style="grid-column: span 2;">
+          <p class="footer-col-title">Architecture</p>
+          <ul class="footer-colophon" role="list">
+            <li><span class="dot bg-blue"></span> <span>Vanilla JS &amp; CSS System</span></li>
+            <li><span class="dot bg-green"></span> <span>Flask &amp; SQLite Telemetry</span></li>
+            <li><span class="dot bg-purple"></span> <span>Three.js &amp; WebGL Dynamic Visuals</span></li>
+            <li style="margin-top: 0.5rem;"><a href="https://github.com" target="_blank" class="source-link">Source on GitHub <span class="external-link">↗</span></a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- SCRIPTS -->
+  <script src="js/utils.js"></script>
+  <script src="js/components.js"></script>
+  <script src="js/three.min.js"></script>
+
+  <script>
+    // =========================================================================
+    // THREE.JS CHROMATIC WAVE SHADER ANIMATION
+    // =========================================================================
+    function initHeroShader() {
+      const canvas = document.getElementById('heroCanvas');
+      const container = document.getElementById('heroSection');
+      if (!canvas || !container || !window.THREE) {
+        console.warn('Three.js or heroCanvas not available');
+        return;
+      }
+
+      const scene = new THREE.Scene();
+      const renderer = new THREE.WebGLRenderer({
+        canvas: canvas,
+        alpha: true,
+        antialias: true,
+        powerPreference: 'high-performance'
+      });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+      renderer.setClearColor(new THREE.Color(0x030712), 1.0);
+
+      const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, -1);
+
+      const uniforms = {
+        resolution: { value: new THREE.Vector2(container.clientWidth, container.clientHeight) },
+        time: { value: 0.0 },
+        mouse: { value: new THREE.Vector2(0.5, 0.5) },
+        xScale: { value: 1.15 },
+        yScale: { value: 0.42 },
+        distortion: { value: 0.06 }
+      };
+
+      const vertexShader = `
+        attribute vec3 position;
+        void main() {
+          gl_Position = vec4(position, 1.0);
+        }
+      `;
+
+      const fragmentShader = `
+        precision highp float;
+        uniform vec2 resolution;
+        uniform float time;
+        uniform vec2 mouse;
+        uniform float xScale;
+        uniform float yScale;
+        uniform float distortion;
+
+        void main() {
+          vec2 p = (gl_FragCoord.xy * 2.0 - resolution) / min(resolution.x, resolution.y);
+          
+          // Subtle mouse pull
+          vec2 m = (mouse - 0.5) * 0.4;
+          p.y += m.y * 0.3;
+          
+          float d = length(p + m) * distortion;
+          
+          float rx = p.x * (1.0 + d);
+          float gx = p.x;
+          float bx = p.x * (1.0 - d);
+
+          // Harmonic chromatic waves
+          float r = 0.045 / abs(p.y + sin((rx + time * 0.9) * xScale) * yScale);
+          float g = 0.040 / abs(p.y + sin((gx - time * 0.7) * (xScale * 1.3) + 1.2) * (yScale * 0.8));
+          float b = 0.048 / abs(p.y + sin((bx + time * 0.8) * (xScale * 0.9) + 2.4) * (yScale * 1.1));
+          
+          // Layer colors: Electric Cyan, Vibrant Violet, Neon Blue
+          vec3 col = vec3(0.0);
+          col += vec3(0.08, 0.65, 1.0) * r;
+          col += vec3(0.72, 0.22, 0.95) * g;
+          col += vec3(0.05, 0.90, 0.75) * b;
+
+          // Vignette on borders
+          vec2 uv = gl_FragCoord.xy / resolution;
+          float vig = smoothstep(0.0, 0.2, uv.x) * smoothstep(1.0, 0.8, uv.x);
+          vig *= smoothstep(0.0, 0.15, uv.y) * smoothstep(1.0, 0.85, uv.y);
+
+          // Dark futuristic base gradient
+          vec3 bg = mix(vec3(0.012, 0.027, 0.07), vec3(0.025, 0.055, 0.14), uv.y);
+
+          gl_FragColor = vec4(bg + col * (0.85 + vig * 0.35), 1.0);
+        }
+      `;
+
+      const positions = new Float32Array([
+        -1.0, -1.0, 0.0,
+         1.0, -1.0, 0.0,
+        -1.0,  1.0, 0.0,
+         1.0, -1.0, 0.0,
+        -1.0,  1.0, 0.0,
+         1.0,  1.0, 0.0,
+      ]);
+
+      const geometry = new THREE.BufferGeometry();
+      geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+      const material = new THREE.RawShaderMaterial({
+        vertexShader: vertexShader,
+        fragmentShader: fragmentShader,
+        uniforms: uniforms,
+        side: THREE.DoubleSide
+      });
+
+      const mesh = new THREE.Mesh(geometry, material);
+      scene.add(mesh);
+
+      function handleResize() {
+        if (!container) return;
+        const width = container.clientWidth;
+        const height = container.clientHeight;
+        renderer.setSize(width, height, false);
+        uniforms.resolution.value.set(width, height);
+      }
+      window.addEventListener('resize', handleResize);
+      handleResize();
+
+      // Mouse interaction
+      let targetMouseX = 0.5, targetMouseY = 0.5;
+      let currMouseX = 0.5, currMouseY = 0.5;
+
+      window.addEventListener('mousemove', (e) => {
+        const rect = container.getBoundingClientRect();
+        if (e.clientY <= rect.bottom && e.clientY >= rect.top) {
+          targetMouseX = (e.clientX - rect.left) / rect.width;
+          targetMouseY = 1.0 - (e.clientY - rect.top) / rect.height;
+        }
+      }, { passive: true });
+
+      let lastTime = 0;
+      function animate(time) {
+        requestAnimationFrame(animate);
+        // Smooth mouse interpolation
+        currMouseX += (targetMouseX - currMouseX) * 0.05;
+        currMouseY += (targetMouseY - currMouseY) * 0.05;
+        uniforms.mouse.value.set(currMouseX, currMouseY);
+
+        // Frame timing
+        uniforms.time.value = time * 0.0012;
+        renderer.render(scene, camera);
+      }
+      requestAnimationFrame(animate);
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initHeroShader);
+    } else {
+      initHeroShader();
+    }
+
+    // =========================================================================
+    // AMBIENT CURSOR AURA & BENTO CARD SPOTLIGHT
+    // =========================================================================
+    const aura = document.getElementById('cursorAura');
+    let auraX = 0, auraY = 0;
+    let targetAuraX = 0, targetAuraY = 0;
+
+    document.addEventListener('mousemove', (e) => {
+      targetAuraX = e.clientX;
+      targetAuraY = e.clientY;
+
+      // Update card spotlight coordinates
+      document.querySelectorAll('.interactive-card').forEach(card => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        card.style.setProperty('--mouse-x', `${x}px`);
+        card.style.setProperty('--mouse-y', `${y}px`);
+      });
+    }, { passive: true });
+
+    function renderAura() {
+      auraX += (targetAuraX - auraX) * 0.12;
+      auraY += (targetAuraY - auraY) * 0.12;
+      if (aura) {
+        aura.style.left = `${auraX}px`;
+        aura.style.top = `${auraY}px`;
+      }
+      requestAnimationFrame(renderAura);
+    }
+    requestAnimationFrame(renderAura);
+
+    // =========================================================================
+    // FOOTER UTC CLOCK
+    // =========================================================================
+    function initFooterTime() {
+      const timeEl = document.getElementById('footer-local-time-about');
+      if (!timeEl) return;
+      function update() {
+        try {
+          const now = new Date();
+          const formatter = new Intl.DateTimeFormat('en-GB', {
+            timeZone: 'UTC',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false
+          });
+          timeEl.textContent = formatter.format(now);
+        } catch (_) {}
+      }
+      update();
+      setInterval(update, 30000);
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initFooterTime);
+    } else {
+      initFooterTime();
+    }
+
+    // =========================================================================
+    // THEME CONTROLLER
+    // =========================================================================
+    const themeToggle = document.getElementById('themeToggle');
+    if (themeToggle) {
+      const savedTheme = localStorage.getItem('theme');
+      const isDark = savedTheme === 'dark';
+      if (isDark) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        themeToggle.checked = true;
+      } else {
+        document.documentElement.setAttribute('data-theme', 'light');
+        themeToggle.checked = false;
+      }
+
+      themeToggle.addEventListener('change', (e) => {
+        if (e.target.checked) {
+          document.documentElement.setAttribute('data-theme', 'dark');
+          localStorage.setItem('theme', 'dark');
+        } else {
+          document.documentElement.setAttribute('data-theme', 'light');
+          localStorage.setItem('theme', 'light');
+        }
+      });
+    }
+  </script>
+</body>
+</html>

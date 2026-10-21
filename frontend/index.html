@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Project Intelligence Platform</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>">
+  
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/theme.css">
+  
+  <style>
+    /* Home Page Specific Styles */
+    .hero {
+      position: relative;
+      text-align: center;
+      padding: 8rem var(--space-4);
+      margin-bottom: var(--space-12);
+      border-bottom: 1px solid var(--gray-200);
+      overflow: hidden;
+      background: #000;
+    }
+    
+    .hero__canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+    
+    .hero .container {
+      position: relative;
+      z-index: 1;
+    }
+    
+    .hero__title {
+      font-size: clamp(2.5rem, 6vw, 5.5rem);
+      font-weight: 800;
+      margin-bottom: var(--space-4);
+      color: #fff !important;
+      letter-spacing: -0.02em;
+    }
+    
+    .hero__subtitle {
+      font-size: 1.25rem;
+      color: rgba(255,255,255,0.8) !important;
+      margin-bottom: var(--space-8);
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    
+    .hero__search {
+      display: flex;
+      max-width: 600px;
+      margin: 0 auto;
+      gap: var(--space-2);
+      position: relative;
+      z-index: 2;
+    }
+    
+    .hero__search-input {
+      flex: 1;
+      padding: var(--space-3) var(--space-4);
+      border: 1px solid rgba(255,255,255,0.2);
+      background: rgba(0,0,0,0.5);
+      color: white;
+      border-radius: var(--radius-full);
+      font-size: 1rem;
+      backdrop-filter: blur(10px);
+    }
+    
+    .hero__search-input::placeholder {
+      color: rgba(255,255,255,0.6);
+    }
+    
+    /* Liquid Glass Button Styles */
+    .liquid-btn {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 2.5rem;
+      height: 48px;
+      font-size: 1rem;
+      font-weight: 600;
+      color: white;
+      border: none;
+      border-radius: 99px;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+      background: transparent;
+      outline: none;
+    }
+    .liquid-btn:hover {
+      transform: scale(1.05);
+    }
+    .liquid-btn-bg {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      border-radius: 99px;
+      z-index: -2;
+      box-shadow: 0 0 6px rgba(0,0,0,0.03),0 2px 6px rgba(0,0,0,0.08),inset 3px 3px 0.5px -3px rgba(0,0,0,0.9),inset -3px -3px 0.5px -3px rgba(0,0,0,0.85),inset 1px 1px 1px -0.5px rgba(0,0,0,0.6),inset -1px -1px 1px -0.5px rgba(0,0,0,0.6),inset 0 0 6px 6px rgba(0,0,0,0.12),inset 0 0 2px 2px rgba(0,0,0,0.06),0 0 12px rgba(255,255,255,0.15);
+    }
+    .liquid-btn-glass {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      border-radius: 99px;
+      z-index: -1;
+      backdrop-filter: url("#container-glass");
+      overflow: hidden;
+    }
+    .liquid-btn-text {
+      position: relative;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .section-header {
+      margin-bottom: var(--space-6);
+    }
+    
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: var(--gray-900);
+    }
+    
+    [data-theme="dark"] .section-title { color: var(--white); }
+
+    .featured-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-6);
+      margin-bottom: var(--space-12);
+    }
+    
+    .category-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--space-4);
+      margin-bottom: var(--space-12);
+    }
+    
+    .category-card {
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      padding: var(--space-6);
+      border-radius: var(--radius-lg);
+      text-align: center;
+      cursor: pointer;
+      transition: all var(--duration-200);
+    }
+    
+    .category-card:hover {
+      border-color: var(--primary-500);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+    
+    [data-theme="dark"] .category-card {
+      background: var(--gray-800);
+      border-color: var(--gray-700);
+    }
+    
+    @media (max-width: 900px) {
+      .featured-grid { grid-template-columns: repeat(2, 1fr); }
+      .category-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 600px) {
+      .featured-grid, .category-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header__container">
+      <div class="header__brand">
+        <svg class="header__logo" width="32" height="32" viewBox="0 0 32 32" fill="none">
+          <rect width="32" height="32" rx="8" fill="var(--primary-500)"/>
+          <path d="M16 8L8 24H24L16 8Z" fill="white"/>
+        </svg>
+        <h1 class="header__title">Project Intelligence</h1>
+      </div>
+      <nav class="header__nav">
+        <a href="index.html" class="nav-link nav-link--active">Home</a>
+        <a href="projects.html" class="nav-link">Discovery</a>
+        <a href="about.html" class="nav-link">About</a>
+      </nav>
+      <div class="header__actions">
+        <input type="checkbox" class="theme-checkbox" id="themeToggle" aria-label="Toggle theme">
+        <a href="admin.html" class="btn btn--secondary" id="loginBtn">Admin Login</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Liquid Glass SVG Filter -->
+    <svg class="d-none" style="display:none;">
+      <defs>
+        <filter id="container-glass" x="0%" y="0%" width="100%" height="100%" color-interpolation-filters="sRGB">
+          <feTurbulence type="fractalNoise" baseFrequency="0.05 0.05" numOctaves="1" seed="1" result="turbulence" />
+          <feGaussianBlur in="turbulence" stdDeviation="2" result="blurredNoise" />
+          <feDisplacementMap in="SourceGraphic" in2="blurredNoise" scale="70" xChannelSelector="R" yChannelSelector="B" result="displaced" />
+          <feGaussianBlur in="displaced" stdDeviation="4" result="finalBlur" />
+          <feComposite in="finalBlur" in2="finalBlur" operator="over" />
+        </filter>
+      </defs>
+    </svg>
+
+    <section class="hero" id="heroSection">
+      <canvas id="heroCanvas" class="hero__canvas"></canvas>
+      <div class="container relative z-10">
+        <h2 class="hero__title">Discover Student Innovations</h2>
+        <p class="hero__subtitle">Find, analyze, and verify computer science projects built by students across various domains and technologies.</p>
+        
+        <form class="hero__search" action="projects.html" method="GET">
+          <input type="search" name="q" class="hero__search-input" placeholder="Search for projects, tech stacks, or domains..." required>
+          <button type="submit" class="liquid-btn">
+            <span class="liquid-btn-bg"></span>
+            <span class="liquid-btn-glass"></span>
+            <span class="liquid-btn-text">Search Projects</span>
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <div class="container">
+      <section style="margin-bottom: var(--space-8);">
+        <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-6);">
+          <h3 class="section-title" style="margin: 0;">Featured Projects</h3>
+          <a href="projects.html" class="btn btn--outline" style="border-radius: var(--radius-full); font-weight: 600; font-size: 0.875rem; padding: 0.5rem 1.25rem; display: inline-flex; align-items: center; gap: 0.35rem;">
+            Explore All Projects <span>&rarr;</span>
+          </a>
+        </div>
+        <div class="featured-grid" id="featuredProjects">
+          <!-- Populated by JS -->
+        </div>
+      </section>
+
+      <section id="tech-section" style="padding: 4rem 0;">
+        <div class="tech-layout" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 4rem; align-items: center;">
+          
+          <div>
+            <header style="margin-bottom: 2.5rem;">
+              <p style="color: var(--primary-500); font-weight: 600; text-transform: uppercase; font-size: 0.875rem; letter-spacing: 0.05em; margin-bottom: 0.75rem;">Tech spectrum</p>
+              <h2 style="font-size: clamp(2rem, 4vw, 2.5rem); font-weight: 800; margin-bottom: 1rem; line-height: 1.2; color: var(--text-primary);">Tech Radar &amp; Matrix</h2>
+              <p style="color: var(--text-secondary); font-size: 1.125rem;">From the interface to the infrastructure.</p>
+            </header>
+            
+            <dl style="display: flex; flex-direction: column; gap: 1rem; margin: 0;">
+              <div class="matrix-card" style="padding: 1.5rem; border-radius: var(--radius-lg); border: 1px solid var(--gray-200); background: var(--bg-secondary);">
+                <dt style="font-weight: 700; font-size: 1.125rem; margin-bottom: 0.5rem; color: var(--text-primary);">Frontend engineering</dt>
+                <dd style="color: var(--text-secondary); margin: 0;">TypeScript · React · Vue · Astro · Tailwind</dd>
+              </div>
+              <div class="matrix-card" style="padding: 1.5rem; border-radius: var(--radius-lg); border: 1px solid var(--gray-200); background: var(--bg-secondary);">
+                <dt style="font-weight: 700; font-size: 1.125rem; margin-bottom: 0.5rem; color: var(--text-primary);">Systems &amp; the edge</dt>
+                <dd style="color: var(--text-secondary); margin: 0;">Go · Cloudflare Workers · SQLite · Docker</dd>
+              </div>
+              <div class="matrix-card" style="padding: 1.5rem; border-radius: var(--radius-lg); border: 1px solid var(--gray-200); background: var(--bg-secondary);">
+                <dt style="font-weight: 700; font-size: 1.125rem; margin-bottom: 0.5rem; color: var(--text-primary);">AI &amp; agent workflows</dt>
+                <dd style="color: var(--text-secondary); margin: 0;">LLM APIs · MCP · AI Agents · RAG</dd>
+              </div>
+            </dl>
+          </div>
+          
+          <div style="position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+            <div id="canvasContainer" style="width: 100%; max-width: 500px; aspect-ratio: 1/1; position: relative;">
+              <canvas id="techCloudCanvas" width="600" height="600" class="h-auto max-w-[90vw] rounded-lg touch-pan-y" style="width: 100%; height: 100%;" aria-label="Interactive 3D Icon Cloud" role="img"></canvas>
+            </div>
+            <div id="techTags" style="display: none;">
+              <a href="projects.html?q=TypeScript"><img src="https://cdn.simpleicons.org/typescript/3178C6" width="60" height="60" alt="TypeScript"></a>
+              <a href="projects.html?q=React"><img src="https://cdn.simpleicons.org/react/61DAFB" width="60" height="60" alt="React"></a>
+              <a href="projects.html?q=Vue"><img src="https://cdn.simpleicons.org/vuedotjs/4FC08D" width="60" height="60" alt="Vue"></a>
+              <a href="projects.html?q=Astro"><img src="https://cdn.simpleicons.org/astro/FF5D01" width="60" height="60" alt="Astro"></a>
+              <a href="projects.html?q=Python"><img src="https://cdn.simpleicons.org/python/3776AB" width="60" height="60" alt="Python"></a>
+              <a href="projects.html?q=Go"><img src="https://cdn.simpleicons.org/go/00ADD8" width="60" height="60" alt="Go"></a>
+              <a href="projects.html?q=Node.js"><img src="https://cdn.simpleicons.org/nodedotjs/339933" width="60" height="60" alt="Node.js"></a>
+              <a href="projects.html?q=C++"><img src="https://cdn.simpleicons.org/cplusplus/00599C" width="60" height="60" alt="C++"></a>
+              <a href="projects.html?q=Docker"><img src="https://cdn.simpleicons.org/docker/2496ED" width="60" height="60" alt="Docker"></a>
+              <a href="projects.html?q=Anthropic"><img src="https://cdn.simpleicons.org/anthropic/D97757" width="60" height="60" alt="Anthropic"></a>
+              <a href="projects.html?q=PyTorch"><img src="https://cdn.simpleicons.org/pytorch/EE4C2C" width="60" height="60" alt="PyTorch"></a>
+              <a href="projects.html?q=PostgreSQL"><img src="https://cdn.simpleicons.org/postgresql/4169E1" width="60" height="60" alt="PostgreSQL"></a>
+              <a href="projects.html?q=Redis"><img src="https://cdn.simpleicons.org/redis/DC382D" width="60" height="60" alt="Redis"></a>
+              <a href="projects.html?q=GraphQL"><img src="https://cdn.simpleicons.org/graphql/E10098" width="60" height="60" alt="GraphQL"></a>
+              <a href="projects.html?q=Tailwind"><img src="https://cdn.simpleicons.org/tailwindcss/06B6D4" width="60" height="60" alt="Tailwind"></a>
+              <a href="projects.html?q=Linux"><img src="https://cdn.simpleicons.org/linux/FCC624" width="60" height="60" alt="Linux"></a>
+              <a href="projects.html?q=Kubernetes"><img src="https://cdn.simpleicons.org/kubernetes/326CE5" width="60" height="60" alt="Kubernetes"></a>
+              <a href="projects.html?q=MongoDB"><img src="https://cdn.simpleicons.org/mongodb/47A248" width="60" height="60" alt="MongoDB"></a>
+              <a href="projects.html?q=Figma"><img src="https://cdn.simpleicons.org/figma/F24E1E" width="60" height="60" alt="Figma"></a>
+              <a href="projects.html?q=Cloudflare"><img src="https://cdn.simpleicons.org/cloudflare/F38020" width="60" height="60" alt="Cloudflare"></a>
+              <a href="projects.html?q=Supabase"><img src="https://cdn.simpleicons.org/supabase/3ECF8E" width="60" height="60" alt="Supabase"></a>
+            </div>
+            <p style="margin-top: 1rem; color: var(--gray-500); font-size: 0.875rem; text-align: center;">Drag to rotate. Hover to pause and inspect.</p>
+          </div>
+          
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script src="js/utils.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/components.js"></script>
+  <script src="js/three.min.js"></script>
+  <script src="js/tagcanvas.min.js"></script>
+  <script>
+    function initHeroShader() {
+      const canvas = document.getElementById('heroCanvas');
+      if (!canvas || !window.THREE) return;
+
+      const scene = new THREE.Scene();
+      const renderer = new THREE.WebGLRenderer({ canvas, alpha: true });
+      renderer.setPixelRatio(window.devicePixelRatio);
+      renderer.setClearColor(new THREE.Color(0x000000));
+
+      const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, -1);
+
+      const uniforms = {
+        resolution: { value: [window.innerWidth, window.innerHeight] },
+        time: { value: 0.0 },
+        xScale: { value: 1.0 },
+        yScale: { value: 0.5 },
+        distortion: { value: 0.05 },
+      };
+
+      const vertexShader = `
+        attribute vec3 position;
+        void main() {
+          gl_Position = vec4(position, 1.0);
+        }
+      `;
+
+      const fragmentShader = `
+        precision highp float;
+        uniform vec2 resolution;
+        uniform float time;
+        uniform float xScale;
+        uniform float yScale;
+        uniform float distortion;
+
+        void main() {
+          vec2 p = (gl_FragCoord.xy * 2.0 - resolution) / min(resolution.x, resolution.y);
+          float d = length(p) * distortion;
+          
+          float rx = p.x * (1.0 + d);
+          float gx = p.x;
+          float bx = p.x * (1.0 - d);
+
+          float r = 0.05 / abs(p.y + sin((rx + time) * xScale) * yScale);
+          float g = 0.05 / abs(p.y + sin((gx + time) * xScale) * yScale);
+          float b = 0.05 / abs(p.y + sin((bx + time) * xScale) * yScale);
+          
+          gl_FragColor = vec4(r, g, b, 1.0);
+        }
+      `;
+
+      const positions = new Float32Array([
+        -1.0, -1.0, 0.0,
+         1.0, -1.0, 0.0,
+        -1.0,  1.0, 0.0,
+         1.0, -1.0, 0.0,
+        -1.0,  1.0, 0.0,
+         1.0,  1.0, 0.0,
+      ]);
+
+      const geometry = new THREE.BufferGeometry();
+      geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+
+      const material = new THREE.RawShaderMaterial({
+        vertexShader,
+        fragmentShader,
+        uniforms: uniforms,
+        side: THREE.DoubleSide,
+      });
+
+      const mesh = new THREE.Mesh(geometry, material);
+      scene.add(mesh);
+
+      const handleResize = () => {
+        const hero = document.getElementById('heroSection');
+        if (!hero) return;
+        const width = hero.offsetWidth;
+        const height = hero.offsetHeight;
+        renderer.setSize(width, height, false);
+        uniforms.resolution.value = [width, height];
+      };
+
+      let animationId;
+      const animate = () => {
+        uniforms.time.value += 0.01;
+        renderer.render(scene, camera);
+        animationId = requestAnimationFrame(animate);
+      };
+
+      handleResize();
+      animate();
+      window.addEventListener('resize', handleResize);
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Init Hero Background
+      initHeroShader();
+      
+      // Initialize TagCanvas for Tech Cloud
+      try {
+        const isDark = localStorage.getItem('theme') === 'dark';
+        const tcColor = isDark ? '#ffffff' : '#0F172A';
+        TagCanvas.Start('techCloudCanvas', 'techTags', {
+          imageMode: 'image',
+          imageScale: 1.5,
+          imagePadding: 4,
+          shape: 'sphere',
+          outlineColour: 'transparent',
+          reverse: true,
+          depth: 0.8,
+          maxSpeed: 0.05,
+          initial: [0.1, -0.1],
+          tooltip: 'native'
+        });
+      } catch(e) {
+        console.error("TagCanvas failed to load", e);
+      }
+      
+      // Theme toggle setup
+      const themeToggle = document.getElementById('themeToggle');
+      const isDark = localStorage.getItem('theme') === 'dark';
+      if (isDark) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        themeToggle.checked = true;
+      } else {
+        themeToggle.checked = false;
+      }
+      themeToggle.addEventListener('change', (e) => {
+        const nextTheme = e.target.checked ? 'dark' : 'light';
+        if (e.target.checked) {
+          document.documentElement.setAttribute('data-theme', 'dark');
+          localStorage.setItem('theme', 'dark');
+        } else {
+          document.documentElement.removeAttribute('data-theme');
+          localStorage.setItem('theme', 'light');
+        }
+        
+        // Update TagCanvas Color
+        try {
+          const tcColor = nextTheme === 'dark' ? '#ffffff' : '#0F172A';
+          TagCanvas.Update('techCloudCanvas');
+          TagCanvas.SetSpeed('techCloudCanvas', [0.1, -0.1]);
+          // To update color we must restart it or update options
+          TagCanvas.Start('techCloudCanvas', 'techTags', {
+            imageMode: 'image',
+            imageScale: 1.5,
+            imagePadding: 4,
+            shape: 'sphere',
+            outlineColour: 'transparent',
+            reverse: true,
+            depth: 0.8,
+            maxSpeed: 0.05,
+            initial: [0.1, -0.1],
+            tooltip: 'native'
+          });
+        } catch(err) {}
+      });
+
+      // Load Featured Projects
+      try {
+        const res = await api.getProjects({ limit: 3 });
+        const grid = document.getElementById('featuredProjects');
+        if (res.success && res.data.projects.length > 0) {
+          grid.innerHTML = '';
+          res.data.projects.forEach(p => {
+            const card = components.createProjectCard(p);
+            grid.appendChild(card);
+          });
+        } else {
+          grid.innerHTML = '<p class="text-muted">No projects found.</p>';
+        }
+      } catch(e) {
+        console.error(e);
+      }
+    });
+  </script>
+  <footer class="app-footer" role="contentinfo">
+    <div class="footer-glow-line" aria-hidden="true"></div>
+    <div class="container footer-container">
+      <div class="footer-top">
+        <div class="footer-brand-section">
+          <a href="/" class="footer-brand" aria-label="Home">
+            <span class="footer-brand-text">ProjIntelligence</span>
+          </a>
+          <div class="footer-status">
+            <div class="status-badge">
+              <svg class="status-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="8" cy="8" r="3"></circle>
+                <path d="M8 1v2.5M8 12.5V15M1 8h2.5M12.5 8H15"></path>
+              </svg>
+              <span class="status-text">Global Network</span>
+              <span class="status-divider" aria-hidden="true"></span>
+              <time id="footer-local-time-index" class="status-time">00:00</time>
+              <span class="status-tz">UTC</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="footer-grid">
+        <div class="footer-col">
+          <p class="footer-col-title">Navigation</p>
+          <ul class="footer-links" role="list">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="projects.html">Discovery</a></li>
+            <li><a href="admin.html">Admin Panel</a></li>
+          </ul>
+        </div>
+        
+        <div class="footer-col">
+          <p class="footer-col-title">Connect</p>
+          <ul class="footer-links" role="list">
+            <li><a href="https://github.com" target="_blank" rel="noopener noreferrer">GitHub <span class="external-link">↗</span></a></li>
+            <li><a href="#">Contact Support</a></li>
+          </ul>
+        </div>
+        
+        <div class="footer-col" style="grid-column: span 2;">
+          <p class="footer-col-title">Colophon</p>
+          <ul class="footer-colophon" role="list">
+            <li><span class="dot bg-blue"></span> <span>Vanilla JS & CSS Architecture</span></li>
+            <li><span class="dot bg-green"></span> <span>Flask & SQLite Backend</span></li>
+            <li><span class="dot bg-purple"></span> <span>Three.js & WebGL Visuals</span></li>
+            <li style="margin-top: 0.5rem;"><a href="#" class="source-link">Source on GitHub <span class="external-link">↗</span></a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    
+    <script>
+      function initFooterTimeIndex() {
+        const timeEl = document.getElementById('footer-local-time-index');
+        if (!timeEl) return;
+        function update() {
+          try {
+            const now = new Date();
+            const formatter = new Intl.DateTimeFormat('en-GB', {
+              timeZone: 'UTC',
+              hour: '2-digit',
+              minute: '2-digit',
+              hour12: false,
+            });
+            timeEl.textContent = formatter.format(now);
+          } catch (_) {}
+        }
+        update();
+        setInterval(update, 30000);
+      }
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initFooterTimeIndex);
+      } else {
+        initFooterTimeIndex();
+      }
+    </script>
+  </footer>
+</body>
+</html>
