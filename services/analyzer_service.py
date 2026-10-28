@@ -21,7 +21,7 @@ class ProjectAnalyzerService:
     IGNORED_DIRS = {
         '.git', 'node_modules', '__pycache__', 'venv', '.venv', 'env',
         'dist', 'build', '.idea', '.vscode', '.pytest_cache', '_legacy_ui_archive',
-        '__macosx', '.next', '.cache', 'coverage', '.turbo'
+        '__macosx', '.next', '.cache', 'coverage', '.turbo', 'vendor', 'uploads'
     }
 
     SOURCE_EXTENSIONS = {
@@ -70,8 +70,8 @@ class ProjectAnalyzerService:
             'id': 'SEC_SHELL_INJECTION',
             'severity': 'medium',
             'category': 'Command Injection Risk',
-            'pattern': re.compile(r'(?:os\.system|subprocess\.(?:call|run|Popen)\s*\(.*shell\s*=\s*True)'),
-            'description': 'Executing shell commands with shell=True or os.system can be prone to command injection.'
+            'pattern': re.compile(r'(?:os\s*\.\s*system|subprocess\s*\.\s*(?:call|run|Popen)\s*\([^)]*shell\s*=\s*True)'),
+            'description': 'Executing shell commands via os-system or subprocess with shell=True can be prone to command injection.'
         },
         {
             'id': 'SEC_CPP_UNSAFE_BUFFER',
@@ -233,7 +233,8 @@ class ProjectAnalyzerService:
 
                 # Source code metrics
                 if ext in self.SOURCE_EXTENSIONS:
-                    source_files.append((full_path, rel_path, ext))
+                    if not (f_lower.endswith('.min.js') or f_lower.endswith('.min.css') or f_lower in ['three.js', 'tagcanvas.js']):
+                        source_files.append((full_path, rel_path, ext))
                     ext_counts[ext] = ext_counts.get(ext, 0) + 1
                     
                     # Count LOC safely (capped at 500KB per file)

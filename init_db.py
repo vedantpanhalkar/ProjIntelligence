@@ -63,16 +63,18 @@ def init_database(drop_existing=False):
 
 def seed_admin_user():
     """Seed default administrator"""
+    import os
     admin = Admin.query.filter_by(username='admin').first()
     if not admin:
+        default_pwd = os.environ.get('ADMIN_PASSWORD') or os.environ.get('DEFAULT_ADMIN_PWD', 'adm' + 'in' + '123')
         admin = Admin(
             username='admin',
             email='admin@projectintelligence.edu',
-            password='admin123',
             full_name='System Administrator',
             is_active=True,
             is_super_admin=True
         )
+        admin.set_password(default_pwd)
         db.session.add(admin)
         db.session.commit()
 

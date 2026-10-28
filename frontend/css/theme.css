@@ -62,18 +62,25 @@
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
   
-  /* Primary & Gray high-contrast overrides in dark mode */
-  --primary-50: #1E293B;
-  --primary-100: #334155;
-  --primary-200: #475569;
-  --primary-300: #64748B;
-  --primary-400: #94A3B8;
-  --primary-500: #F8FAFC;
-  --primary-600: #F1F5F9;
-  --gray-600: #94A3B8;
-  --gray-700: #CBD5E1;
-  --gray-800: #E2E8F0;
-  --gray-900: #F8FAFC;
+  /* Gray palette in dark mode - high contrast dark surface tokens */
+  --gray-50: #0F172A;
+  --gray-100: #1E293B;
+  --gray-200: #334155;
+  --gray-300: #475569;
+  --gray-400: #64748B;
+  --gray-500: #94A3B8;
+  --gray-600: #CBD5E1;
+  --gray-700: #334155;
+  --gray-800: #1E293B;
+  --gray-900: #0F172A;
+  
+  --primary-50: #0F172A;
+  --primary-100: #1E293B;
+  --primary-200: #334155;
+  --primary-300: #60A5FA;
+  --primary-400: #38BDF8;
+  --primary-500: #2563EB;
+  --primary-600: #1D4ED8;
   
   /* Theme Toggle Icon */
   --theme-icon: '☀️';
@@ -529,4 +536,100 @@ body {
 :root[data-theme="dark"] .compare-table td {
   border-color: var(--border-light);
   color: #f1f5f9;
+}
+
+/* =============================================================================
+   DARK MODE PROJECT CARDS & FILTER PANEL (REAL MODERN SLATE PALETTE)
+   ============================================================================= */
+:root[data-theme="dark"] .project-card,
+[data-theme="dark"] .project-card {
+  background: #1E293B !important;
+  border-color: #334155 !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4) !important;
+}
+
+:root[data-theme="dark"] .project-card:hover,
+[data-theme="dark"] .project-card:hover {
+  background: #24344D !important;
+  border-color: #38BDF8 !important;
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px -4px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(56, 189, 248, 0.25) !important;
+}
+
+:root[data-theme="dark"] .project-card__title,
+[data-theme="dark"] .project-card__title {
+  color: #F8FAFC !important;
+}
+
+:root[data-theme="dark"] .project-card__description,
+[data-theme="dark"] .project-card__description {
+  color: #94A3B8 !important;
+}
+
+:root[data-theme="dark"] .project-card__meta,
+[data-theme="dark"] .project-card__meta {
+  border-top-color: #334155 !important;
+}
+
+:root[data-theme="dark"] .project-card__stat,
+[data-theme="dark"] .project-card__stat {
+  color: #94A3B8 !important;
+}
+
+:root[data-theme="dark"] .project-card__status,
+[data-theme="dark"] .project-card__status {
+  color: #CBD5E1 !important;
+}
+
+:root[data-theme="dark"] .filter-panel,
+[data-theme="dark"] .filter-panel {
+  background: #1E293B !important;
+  border-color: #334155 !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35) !important;
+}
+
+:root[data-theme="dark"] .filter-label,
+[data-theme="dark"] .filter-label {
+  color: #F8FAFC !important;
+}
+
+:root[data-theme="dark"] .filter-select,
+:root[data-theme="dark"] .search-input,
+[data-theme="dark"] .filter-select,
+[data-theme="dark"] .search-input {
+  background: #0F172A !important;
+  border-color: #334155 !important;
+  color: #F8FAFC !important;
+}
+
+:root[data-theme="dark"] .results-header,
+[data-theme="dark"] .results-header {
+  background: #1E293B !important;
+  border-color: #334155 !important;
+}
+
+:root[data-theme="dark"] .results-title,
+[data-theme="dark"] .results-title {
+  color: #F8FAFC !important;
+}
+
+:root[data-theme="dark"] .results-count,
+[data-theme="dark"] .results-count {
+  color: #94A3B8 !important;
+}
+
+:root[data-theme="dark"] .stat-card,
+[data-theme="dark"] .stat-card {
+  background: #1E293B !important;
+  border-color: #334155 !important;
+}
+
+:root[data-theme="dark"] .stat-card__value,
+[data-theme="dark"] .stat-card__value {
+  color: #F8FAFC !important;
+}
+
+:root[data-theme="dark"] .stat-card__label,
+[data-theme="dark"] .stat-card__label {
+  color: #94A3B8 !important;
 }

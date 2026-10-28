@@ -827,23 +827,49 @@ html {
 }
 
 [data-theme="dark"] .search-input {
-  background: var(--gray-800);
-  color: var(--gray-100);
-  border-color: var(--gray-700);
+  background: #0F172A;
+  color: #F8FAFC;
+  border-color: #334155;
 }
 
 [data-theme="dark"] .project-card {
-  background: var(--gray-800);
-  border-color: var(--gray-700);
+  background: #1E293B !important;
+  border-color: #334155 !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4) !important;
+}
+
+[data-theme="dark"] .project-card:hover {
+  background: #24344D !important;
+  border-color: #38BDF8 !important;
+}
+
+[data-theme="dark"] .project-card__title {
+  color: #F8FAFC !important;
+}
+
+[data-theme="dark"] .project-card__description {
+  color: #94A3B8 !important;
 }
 
 [data-theme="dark"] .project-card__meta {
-  border-top-color: var(--gray-700);
+  border-top-color: #334155 !important;
+}
+
+[data-theme="dark"] .project-card__stat {
+  color: #94A3B8 !important;
 }
 
 [data-theme="dark"] .stat-card {
-  background: var(--gray-800);
-  border-color: var(--gray-700);
+  background: #1E293B !important;
+  border-color: #334155 !important;
+}
+
+[data-theme="dark"] .stat-card__value {
+  color: #F8FAFC !important;
+}
+
+[data-theme="dark"] .stat-card__label {
+  color: #94A3B8 !important;
 }
 
 /* ==========================================================================
