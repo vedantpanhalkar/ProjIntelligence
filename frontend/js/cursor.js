@@ -22,6 +22,13 @@
   const style = document.createElement('style');
   style.id = 'proj-cursor-styles';
   style.textContent = `
+    /* Completely hide the default OS system cursor on fine pointer devices */
+    @media (pointer: fine) {
+      *, *::before, *::after {
+        cursor: none !important;
+      }
+    }
+
     #proj-cursor-container {
       position: fixed;
       top: 0;
@@ -29,105 +36,103 @@
       width: 100vw;
       height: 100vh;
       pointer-events: none;
-      z-index: 999999;
+      z-index: 9999999;
       overflow: hidden;
-      transition: opacity 0.3s ease;
+      transition: opacity 0.25s ease;
     }
 
     #proj-cursor-container.cursor-hidden {
       opacity: 0;
     }
 
-    /* Core Diamond Prism Dot */
-    .proj-cursor-dot {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 10px;
-      height: 10px;
-      border-radius: 2px;
-      background: linear-gradient(135deg, #38BDF8 0%, #2563EB 100%);
-      transform: translate3d(-50%, -50%, 0) rotate(45deg);
-      pointer-events: none;
-      box-shadow: 0 0 10px rgba(56, 189, 248, 0.8), 0 0 20px rgba(37, 99, 235, 0.4);
-      transition: transform 0.15s cubic-bezier(0.2, 0, 0.2, 1), background 0.3s ease;
-      will-change: transform;
-    }
-
-    /* Trailing Follower Halo */
+    /* Outer Trailing Halo Ring */
     .proj-cursor-ring {
       position: fixed;
       top: 0;
       left: 0;
-      width: 38px;
-      height: 38px;
+      width: 42px;
+      height: 42px;
       border-radius: 50%;
-      border: 1.5px solid rgba(56, 189, 248, 0.55);
-      background: radial-gradient(circle, rgba(56, 189, 248, 0.08) 0%, rgba(37, 99, 235, 0.02) 70%, transparent 100%);
+      border: 1.5px solid rgba(56, 189, 248, 0.45);
+      background: radial-gradient(circle, rgba(56, 189, 248, 0.08) 0%, rgba(37, 99, 235, 0.02) 65%, transparent 100%);
       transform: translate3d(-50%, -50%, 0);
       pointer-events: none;
-      transition: width 0.25s cubic-bezier(0.25, 1, 0.5, 1),
-                  height 0.25s cubic-bezier(0.25, 1, 0.5, 1),
-                  border-color 0.25s ease,
-                  background-color 0.25s ease,
-                  box-shadow 0.25s ease;
-      will-change: transform;
+      transition: width 0.22s cubic-bezier(0.25, 1, 0.5, 1),
+                  height 0.22s cubic-bezier(0.25, 1, 0.5, 1),
+                  border-color 0.2s ease,
+                  box-shadow 0.2s ease,
+                  background-color 0.2s ease;
+      will-change: left, top, width, height, transform;
     }
 
-    /* Subtle geometric diamond facet inside the trailing ring */
-    .proj-cursor-ring::after {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
+    /* Core ProjIntelligence Diamond Emblem (Concentric Center) */
+    .proj-cursor-emblem {
+      position: fixed;
+      top: 0;
+      left: 0;
       width: 14px;
       height: 14px;
-      border: 1px solid rgba(56, 189, 248, 0.25);
-      border-radius: 2px;
-      transform: translate(-50%, -50%) rotate(45deg);
-      transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), border-color 0.3s ease;
+      border-radius: 3px;
+      background: linear-gradient(135deg, #38BDF8 0%, #2563EB 100%);
+      transform: translate3d(-50%, -50%, 0) rotate(45deg);
+      pointer-events: none;
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.8), 0 0 20px rgba(37, 99, 235, 0.45);
+      transition: transform 0.2s cubic-bezier(0.2, 0, 0.2, 1), 
+                  width 0.2s ease, 
+                  height 0.2s ease, 
+                  box-shadow 0.2s ease, 
+                  background 0.3s ease;
+      will-change: left, top, transform;
     }
 
-    /* Light Theme Tweaks */
-    :root[data-theme="light"] .proj-cursor-dot {
-      background: linear-gradient(135deg, #0284C7 0%, #1D4ED8 100%);
-      box-shadow: 0 0 8px rgba(2, 132, 199, 0.6);
+    /* Inner specular prism facet */
+    .proj-cursor-emblem::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 4px;
+      height: 4px;
+      border-radius: 1px;
+      background: rgba(255, 255, 255, 0.85);
+      box-shadow: 0 0 4px #ffffff;
     }
+
+    /* Light Theme Adjustments */
     :root[data-theme="light"] .proj-cursor-ring {
-      border-color: rgba(2, 132, 199, 0.45);
-      background: radial-gradient(circle, rgba(2, 132, 199, 0.06) 0%, transparent 70%);
-    }
-    :root[data-theme="light"] .proj-cursor-ring::after {
-      border-color: rgba(2, 132, 199, 0.25);
+      border-color: rgba(2, 132, 199, 0.5);
+      background: radial-gradient(circle, rgba(2, 132, 199, 0.08) 0%, transparent 70%);
     }
 
-    /* Interactive Hover State (links, cards, buttons) */
+    :root[data-theme="light"] .proj-cursor-emblem {
+      background: linear-gradient(135deg, #0284C7 0%, #1D4ED8 100%);
+      box-shadow: 0 0 10px rgba(2, 132, 199, 0.7);
+    }
+
+    /* Interactive Hover State (on buttons, cards, links, inputs) */
     #proj-cursor-container.is-hovering .proj-cursor-ring {
-      width: 54px;
-      height: 54px;
+      width: 58px;
+      height: 58px;
       border-color: #38BDF8;
-      background: radial-gradient(circle, rgba(56, 189, 248, 0.16) 0%, rgba(37, 99, 235, 0.05) 70%, transparent 100%);
-      box-shadow: 0 0 20px rgba(56, 189, 248, 0.35);
+      background: radial-gradient(circle, rgba(56, 189, 248, 0.16) 0%, rgba(37, 99, 235, 0.04) 70%, transparent 100%);
+      box-shadow: 0 0 22px rgba(56, 189, 248, 0.45), inset 0 0 12px rgba(56, 189, 248, 0.15);
     }
 
-    #proj-cursor-container.is-hovering .proj-cursor-ring::after {
-      transform: translate(-50%, -50%) rotate(135deg) scale(1.3);
-      border-color: rgba(56, 189, 248, 0.6);
-    }
-
-    #proj-cursor-container.is-hovering .proj-cursor-dot {
-      transform: translate3d(-50%, -50%, 0) rotate(135deg) scale(0.75);
-      box-shadow: 0 0 14px rgba(56, 189, 248, 1);
+    #proj-cursor-container.is-hovering .proj-cursor-emblem {
+      transform: translate3d(-50%, -50%, 0) rotate(135deg) scale(1.2);
+      box-shadow: 0 0 16px rgba(56, 189, 248, 1), 0 0 28px rgba(37, 99, 235, 0.6);
     }
 
     /* Click Active State */
-    #proj-cursor-container.is-clicked .proj-cursor-dot {
-      transform: translate3d(-50%, -50%, 0) rotate(45deg) scale(1.4);
+    #proj-cursor-container.is-clicked .proj-cursor-emblem {
+      transform: translate3d(-50%, -50%, 0) rotate(45deg) scale(0.85);
     }
 
     #proj-cursor-container.is-clicked .proj-cursor-ring {
-      transform: translate3d(-50%, -50%, 0) scale(0.85);
+      width: 34px;
+      height: 34px;
       border-color: #60A5FA;
+      box-shadow: 0 0 15px rgba(96, 165, 250, 0.6);
     }
 
     /* Click Ripple Shockwave */
@@ -135,26 +140,27 @@
       position: fixed;
       top: 0;
       left: 0;
-      width: 10px;
-      height: 10px;
+      width: 14px;
+      height: 14px;
       border-radius: 4px;
       border: 1.5px solid #38BDF8;
       pointer-events: none;
       transform: translate3d(-50%, -50%, 0) rotate(45deg);
       animation: cursorShockwave 0.5s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
       will-change: transform, opacity;
+      z-index: 9999998;
     }
 
     @keyframes cursorShockwave {
       0% {
-        width: 10px;
-        height: 10px;
+        width: 14px;
+        height: 14px;
         opacity: 1;
         transform: translate3d(-50%, -50%, 0) rotate(45deg) scale(1);
       }
       100% {
-        width: 60px;
-        height: 60px;
+        width: 70px;
+        height: 70px;
         opacity: 0;
         transform: translate3d(-50%, -50%, 0) rotate(135deg) scale(1);
       }
@@ -167,14 +173,14 @@
   container.id = 'proj-cursor-container';
   container.className = 'cursor-hidden';
 
-  const dot = document.createElement('div');
-  dot.className = 'proj-cursor-dot';
-
   const ring = document.createElement('div');
   ring.className = 'proj-cursor-ring';
 
+  const emblem = document.createElement('div');
+  emblem.className = 'proj-cursor-emblem';
+
   container.appendChild(ring);
-  container.appendChild(dot);
+  container.appendChild(emblem);
   document.body.appendChild(container);
 
   // Position Coordinates
@@ -182,7 +188,6 @@
   let mouseY = -100;
   let ringX = -100;
   let ringY = -100;
-  let isMoving = false;
   let isVisible = false;
 
   // Track Mouse Movement
@@ -193,22 +198,26 @@
     if (!isVisible) {
       ringX = mouseX;
       ringY = mouseY;
+      ring.style.left = `${ringX}px`;
+      ring.style.top = `${ringY}px`;
       isVisible = true;
       container.classList.remove('cursor-hidden');
     }
 
-    // Direct instantaneous placement for diamond dot
-    dot.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0) rotate(45deg)`;
+    // Direct instantaneous placement for center diamond emblem
+    emblem.style.left = `${mouseX}px`;
+    emblem.style.top = `${mouseY}px`;
   }, { passive: true });
 
   // Physics-based Fluid Follower Loop (Lerp at 60/120fps)
   function renderFollower() {
     if (isVisible) {
       // Smooth linear interpolation damping
-      ringX += (mouseX - ringX) * 0.18;
-      ringY += (mouseY - ringY) * 0.18;
+      ringX += (mouseX - ringX) * 0.2;
+      ringY += (mouseY - ringY) * 0.2;
 
-      ring.style.transform = `translate3d(${ringX}px, ${ringY}px, 0)`;
+      ring.style.left = `${ringX}px`;
+      ring.style.top = `${ringY}px`;
     }
     requestAnimationFrame(renderFollower);
   }
@@ -263,7 +272,7 @@
   window.addEventListener('mousedown', (e) => {
     container.classList.add('is-clicked');
 
-    // Spawn Shockwave
+    // Spawn Shockwave from exact click position
     const shockwave = document.createElement('div');
     shockwave.className = 'proj-cursor-shockwave';
     shockwave.style.left = `${e.clientX}px`;
