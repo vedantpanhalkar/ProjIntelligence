@@ -58,8 +58,10 @@ def create_app(config_class=None):
     
     return app
 
+# Expose app instance for WSGI servers expecting app:app
+app = create_app()
+
 if __name__ == '__main__':
-    app = create_app()
     print("=" * 60)
     print("  * Student Project Intelligence Platform")
     print("=" * 60)
