@@ -1,27 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ProjIntelligence - Intelligent Repository Explorer & Code Verification</title>
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+  <link rel="icon" type="image/svg+xml"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
   <script>
-    (function() {
+    (function () {
       try {
         var t = localStorage.getItem('theme');
-        if (t) { try { t = JSON.parse(t); } catch(e) {} }
+        if (t) { try { t = JSON.parse(t); } catch (e) { } }
         if (!t && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) t = 'dark';
         document.documentElement.setAttribute('data-theme', t === 'dark' ? 'dark' : 'light');
-      } catch (e) {}
+      } catch (e) { }
     })();
   </script>
-  
+
   <link rel="stylesheet" href="css/variables.css">
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/components.css">
   <link rel="stylesheet" href="css/dashboard.css">
   <link rel="stylesheet" href="css/theme.css">
-  
+
   <style>
     /* Home Page Specific Styles */
     .hero {
@@ -33,7 +35,7 @@
       overflow: hidden;
       background: #000;
     }
-    
+
     .hero__canvas {
       position: absolute;
       top: 0;
@@ -43,12 +45,12 @@
       z-index: 0;
       pointer-events: none;
     }
-    
+
     .hero .container {
       position: relative;
       z-index: 1;
     }
-    
+
     .hero__title {
       font-size: clamp(2.5rem, 6vw, 5.5rem);
       font-weight: 800;
@@ -56,16 +58,16 @@
       color: #fff !important;
       letter-spacing: -0.02em;
     }
-    
+
     .hero__subtitle {
       font-size: 1.25rem;
-      color: rgba(255,255,255,0.8) !important;
+      color: rgba(255, 255, 255, 0.8) !important;
       margin-bottom: var(--space-8);
       max-width: 600px;
       margin-left: auto;
       margin-right: auto;
     }
-    
+
     .hero__search {
       display: flex;
       max-width: 600px;
@@ -74,22 +76,22 @@
       position: relative;
       z-index: 2;
     }
-    
+
     .hero__search-input {
       flex: 1;
       padding: var(--space-3) var(--space-4);
-      border: 1px solid rgba(255,255,255,0.2);
-      background: rgba(0,0,0,0.5);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(0, 0, 0, 0.5);
       color: white;
       border-radius: var(--radius-full);
       font-size: 1rem;
       backdrop-filter: blur(10px);
     }
-    
+
     .hero__search-input::placeholder {
-      color: rgba(255,255,255,0.6);
+      color: rgba(255, 255, 255, 0.6);
     }
-    
+
     /* Liquid Glass Button Styles */
     .liquid-btn {
       position: relative;
@@ -108,24 +110,34 @@
       background: transparent;
       outline: none;
     }
+
     .liquid-btn:hover {
       transform: scale(1.05);
     }
+
     .liquid-btn-bg {
       position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
       border-radius: 99px;
       z-index: -2;
-      box-shadow: 0 0 6px rgba(0,0,0,0.03),0 2px 6px rgba(0,0,0,0.08),inset 3px 3px 0.5px -3px rgba(0,0,0,0.9),inset -3px -3px 0.5px -3px rgba(0,0,0,0.85),inset 1px 1px 1px -0.5px rgba(0,0,0,0.6),inset -1px -1px 1px -0.5px rgba(0,0,0,0.6),inset 0 0 6px 6px rgba(0,0,0,0.12),inset 0 0 2px 2px rgba(0,0,0,0.06),0 0 12px rgba(255,255,255,0.15);
+      box-shadow: 0 0 6px rgba(0, 0, 0, 0.03), 0 2px 6px rgba(0, 0, 0, 0.08), inset 3px 3px 0.5px -3px rgba(0, 0, 0, 0.9), inset -3px -3px 0.5px -3px rgba(0, 0, 0, 0.85), inset 1px 1px 1px -0.5px rgba(0, 0, 0, 0.6), inset -1px -1px 1px -0.5px rgba(0, 0, 0, 0.6), inset 0 0 6px 6px rgba(0, 0, 0, 0.12), inset 0 0 2px 2px rgba(0, 0, 0, 0.06), 0 0 12px rgba(255, 255, 255, 0.15);
     }
+
     .liquid-btn-glass {
       position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
       border-radius: 99px;
       z-index: -1;
       backdrop-filter: url("#container-glass");
       overflow: hidden;
     }
+
     .liquid-btn-text {
       position: relative;
       z-index: 10;
@@ -135,14 +147,16 @@
     .section-header {
       margin-bottom: var(--space-6);
     }
-    
+
     .section-title {
       font-size: 1.5rem;
       font-weight: bold;
       color: var(--gray-900);
     }
-    
-    [data-theme="dark"] .section-title { color: var(--white); }
+
+    [data-theme="dark"] .section-title {
+      color: var(--white);
+    }
 
     .featured-grid {
       display: grid;
@@ -150,14 +164,14 @@
       gap: var(--space-6);
       margin-bottom: var(--space-12);
     }
-    
+
     .category-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: var(--space-4);
       margin-bottom: var(--space-12);
     }
-    
+
     .category-card {
       background: var(--white);
       border: 1px solid var(--gray-200);
@@ -167,34 +181,66 @@
       cursor: pointer;
       transition: all var(--duration-200);
     }
-    
+
     .category-card:hover {
       border-color: var(--primary-500);
       transform: translateY(-2px);
       box-shadow: var(--shadow-md);
     }
-    
+
     [data-theme="dark"] .category-card {
       background: var(--gray-800);
       border-color: var(--gray-700);
     }
-    
+
     @media (max-width: 900px) {
-      .featured-grid { grid-template-columns: repeat(2, 1fr); }
-      .category-grid { grid-template-columns: repeat(2, 1fr); }
+      .featured-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .category-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
     }
+
     @media (max-width: 600px) {
-      .featured-grid, .category-grid { grid-template-columns: 1fr; }
+
+      .featured-grid,
+      .category-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        padding: 4.5rem var(--space-4);
+      }
+
+      .hero__title {
+        font-size: clamp(1.85rem, 6vw, 3rem) !important;
+      }
+
+      .hero__search {
+        flex-direction: column;
+      }
+
+      .hero__search .liquid-btn {
+        width: 100%;
+        height: 44px;
+      }
+      .hero { padding: 4.5rem var(--space-4); }
+      .hero__title { font-size: clamp(1.85rem, 6vw, 3rem) !important; }
+      .hero__search { flex-direction: column; }
+      .hero__search .liquid-btn { width: 100%; height: 44px; }
     }
   </style>
 </head>
+
 <body>
   <header class="header">
     <div class="header__container">
       <div class="header__brand">
         <svg class="header__logo" width="32" height="32" viewBox="0 0 32 32" fill="none">
-          <rect width="32" height="32" rx="8" fill="var(--primary-500)"/>
-          <path d="M16 8L8 24H24L16 8Z" fill="white"/>
+          <rect width="32" height="32" rx="8" fill="var(--primary-500)" />
+          <path d="M16 8L8 24H24L16 8Z" fill="white" />
         </svg>
         <h1 class="header__title">ProjIntelligence</h1>
       </div>
@@ -206,9 +252,119 @@
       <div class="header__actions">
         <input type="checkbox" class="theme-checkbox" id="themeToggle" aria-label="Toggle theme">
         <a href="admin.html" class="btn btn--secondary" id="loginBtn">Admin Login</a>
+        <button class="header__hamburger" id="navToggle" type="button" aria-label="Open navigation menu"
+          aria-expanded="false" aria-controls="mobileNav">
+          <span class="header__hamburger-bar"></span>
+          <span class="header__hamburger-bar"></span>
+          <span class="header__hamburger-bar"></span>
+        </button>
+        <button class="header__hamburger" id="navToggle" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="mobileNav">
+          <span class="header__hamburger-bar"></span>
+          <span class="header__hamburger-bar"></span>
+          <span class="header__hamburger-bar"></span>
+        </button>
       </div>
     </div>
   </header>
+
+  <!-- Mobile Navigation Drawer -->
+  <div class="mobile-nav-backdrop" id="mobileNavBackdrop" aria-hidden="true"></div>
+  <nav class="mobile-nav" id="mobileNav" aria-label="Mobile Navigation" aria-hidden="true">
+    <div class="mobile-nav__content">
+      <div class="mobile-nav__links">
+        <a href="index.html" class="mobile-nav__link is-active">
+          <span class="mobile-nav__icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+              <polyline points="9 22 9 12 15 12 15 22" />
+            </svg>
+          </span>
+          <span class="mobile-nav__title">Home</span>
+          <span class="mobile-nav__badge">Current</span>
+        </a>
+        <a href="projects.html" class="mobile-nav__link">
+          <span class="mobile-nav__icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+          </span>
+          <span class="mobile-nav__title">Discovery</span>
+        </a>
+        <a href="about.html" class="mobile-nav__link">
+          <span class="mobile-nav__icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="16" x2="12" y2="12" />
+              <line x1="12" y1="8" x2="12.01" y2="8" />
+            </svg>
+          </span>
+          <span class="mobile-nav__title">About</span>
+        </a>
+        <a href="admin.html" class="mobile-nav__link">
+          <span class="mobile-nav__icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+              <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+            </svg>
+          </span>
+          <span class="mobile-nav__title">Admin Portal</span>
+        </a>
+      </div>
+      <div class="mobile-nav__footer">
+        <a href="admin.html" class="btn btn--secondary mobile-nav__btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3" />
+          </svg>
+          <span>Admin Login</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mobile Navigation Drawer -->
+  <div class="mobile-nav-backdrop" id="mobileNavBackdrop" aria-hidden="true"></div>
+  <nav class="mobile-nav" id="mobileNav" aria-label="Mobile Navigation" aria-hidden="true">
+    <div class="mobile-nav__content">
+      <div class="mobile-nav__links">
+        <a href="index.html" class="mobile-nav__link is-active">
+          <span class="mobile-nav__icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          </span>
+          <span class="mobile-nav__title">Home</span>
+          <span class="mobile-nav__badge">Current</span>
+        </a>
+        <a href="projects.html" class="mobile-nav__link">
+          <span class="mobile-nav__icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          </span>
+          <span class="mobile-nav__title">Discovery</span>
+        </a>
+        <a href="about.html" class="mobile-nav__link">
+          <span class="mobile-nav__icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          </span>
+          <span class="mobile-nav__title">About</span>
+        </a>
+        <a href="admin.html" class="mobile-nav__link">
+          <span class="mobile-nav__icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </span>
+          <span class="mobile-nav__title">Admin Portal</span>
+        </a>
+      </div>
+      <div class="mobile-nav__footer">
+        <a href="admin.html" class="btn btn--secondary mobile-nav__btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg>
+          <span>Admin Login</span>
+        </a>
+      </div>
+    </div>
+  </nav>
 
   <main>
     <!-- Liquid Glass SVG Filter -->
@@ -217,7 +373,8 @@
         <filter id="container-glass" x="0%" y="0%" width="100%" height="100%" color-interpolation-filters="sRGB">
           <feTurbulence type="fractalNoise" baseFrequency="0.05 0.05" numOctaves="1" seed="1" result="turbulence" />
           <feGaussianBlur in="turbulence" stdDeviation="2" result="blurredNoise" />
-          <feDisplacementMap in="SourceGraphic" in2="blurredNoise" scale="70" xChannelSelector="R" yChannelSelector="B" result="displaced" />
+          <feDisplacementMap in="SourceGraphic" in2="blurredNoise" scale="70" xChannelSelector="R" yChannelSelector="B"
+            result="displaced" />
           <feGaussianBlur in="displaced" stdDeviation="4" result="finalBlur" />
           <feComposite in="finalBlur" in2="finalBlur" operator="over" />
         </filter>
@@ -227,15 +384,19 @@
     <section class="hero" id="heroSection">
       <canvas id="heroCanvas" class="hero__canvas"></canvas>
       <div class="container relative z-10">
-        <div style="display: inline-flex; align-items: center; gap: 0.6rem; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.18); padding: 0.4rem 1.1rem; border-radius: 99px; margin-bottom: 1.5rem; font-size: 0.85rem; font-weight: 600; color: #f1f5f9; backdrop-filter: blur(12px);">
-          <span style="width: 8px; height: 8px; border-radius: 50%; background: #10b981; box-shadow: 0 0 10px #10b981;"></span>
-          <span>Engineered by Vedant • ProjIntelligence</span>
+        <div
+          style="display: inline-flex; align-items: center; gap: 0.6rem; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.18); padding: 0.4rem 1.1rem; border-radius: 99px; margin-bottom: 1.5rem; font-size: 0.85rem; font-weight: 600; color: #f1f5f9; backdrop-filter: blur(12px);">
+          <span
+            style="width: 8px; height: 8px; border-radius: 50%; background: #10b981; box-shadow: 0 0 10px #10b981;"></span>
+          <span>Engineered by Hagra Vedant • ProjIntelligence</span>
         </div>
         <h2 class="hero__title">Explore Intelligent Software Repositories</h2>
-        <p class="hero__subtitle">An authentic repository browser with automated AST technology detection, deterministic health scores, and static security audits.</p>
-        
+        <p class="hero__subtitle">An authentic repository browser with automated AST technology detection, deterministic
+          health scores, and static security audits.</p>
+
         <form class="hero__search" action="projects.html" method="GET">
-          <input type="search" name="q" class="hero__search-input" placeholder="Search for projects, tech stacks, or domains..." required>
+          <input type="search" name="q" class="hero__search-input"
+            placeholder="Search for projects, tech stacks, or domains..." required>
           <button type="submit" class="liquid-btn">
             <span class="liquid-btn-bg"></span>
             <span class="liquid-btn-glass"></span>
@@ -247,9 +408,11 @@
 
     <div class="container">
       <section style="margin-bottom: var(--space-8);">
-        <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-6);">
+        <div class="section-header"
+          style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-6);">
           <h3 class="section-title" style="margin: 0;">Featured Projects</h3>
-          <a href="projects.html" class="btn btn--outline" style="border-radius: var(--radius-full); font-weight: 600; font-size: 0.875rem; padding: 0.5rem 1.25rem; display: inline-flex; align-items: center; gap: 0.35rem;">
+          <a href="projects.html" class="btn btn--outline"
+            style="border-radius: var(--radius-full); font-weight: 600; font-size: 0.875rem; padding: 0.5rem 1.25rem; display: inline-flex; align-items: center; gap: 0.35rem;">
             Explore All Projects <span>&rarr;</span>
           </a>
         </div>
@@ -259,61 +422,97 @@
       </section>
 
       <section id="tech-section" style="padding: 4rem 0;">
-        <div class="tech-layout" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 4rem; align-items: center;">
-          
+        <div class="tech-layout"
+          style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 4rem; align-items: center;">
+
           <div>
             <header style="margin-bottom: 2.5rem;">
-              <p style="color: var(--primary-500); font-weight: 600; text-transform: uppercase; font-size: 0.875rem; letter-spacing: 0.05em; margin-bottom: 0.75rem;">Tech spectrum</p>
-              <h2 style="font-size: clamp(2rem, 4vw, 2.5rem); font-weight: 800; margin-bottom: 1rem; line-height: 1.2; color: var(--text-primary);">Tech Radar &amp; Matrix</h2>
-              <p style="color: var(--text-secondary); font-size: 1.125rem;">From the interface to the infrastructure.</p>
+              <p
+                style="color: var(--primary-500); font-weight: 600; text-transform: uppercase; font-size: 0.875rem; letter-spacing: 0.05em; margin-bottom: 0.75rem;">
+                Tech spectrum</p>
+              <h2
+                style="font-size: clamp(2rem, 4vw, 2.5rem); font-weight: 800; margin-bottom: 1rem; line-height: 1.2; color: var(--text-primary);">
+                Tech Radar &amp; Matrix</h2>
+              <p style="color: var(--text-secondary); font-size: 1.125rem;">From the interface to the infrastructure.
+              </p>
             </header>
-            
+
             <dl style="display: flex; flex-direction: column; gap: 1rem; margin: 0;">
-              <div class="matrix-card" style="padding: 1.5rem; border-radius: var(--radius-lg); border: 1px solid var(--gray-200); background: var(--bg-secondary);">
-                <dt style="font-weight: 700; font-size: 1.125rem; margin-bottom: 0.5rem; color: var(--text-primary);">Frontend engineering</dt>
+              <div class="matrix-card"
+                style="padding: 1.5rem; border-radius: var(--radius-lg); border: 1px solid var(--gray-200); background: var(--bg-secondary);">
+                <dt style="font-weight: 700; font-size: 1.125rem; margin-bottom: 0.5rem; color: var(--text-primary);">
+                  Frontend engineering</dt>
                 <dd style="color: var(--text-secondary); margin: 0;">TypeScript · React · Vue · Astro · Tailwind</dd>
               </div>
-              <div class="matrix-card" style="padding: 1.5rem; border-radius: var(--radius-lg); border: 1px solid var(--gray-200); background: var(--bg-secondary);">
-                <dt style="font-weight: 700; font-size: 1.125rem; margin-bottom: 0.5rem; color: var(--text-primary);">Systems &amp; the edge</dt>
+              <div class="matrix-card"
+                style="padding: 1.5rem; border-radius: var(--radius-lg); border: 1px solid var(--gray-200); background: var(--bg-secondary);">
+                <dt style="font-weight: 700; font-size: 1.125rem; margin-bottom: 0.5rem; color: var(--text-primary);">
+                  Systems &amp; the edge</dt>
                 <dd style="color: var(--text-secondary); margin: 0;">Go · Cloudflare Workers · SQLite · Docker</dd>
               </div>
-              <div class="matrix-card" style="padding: 1.5rem; border-radius: var(--radius-lg); border: 1px solid var(--gray-200); background: var(--bg-secondary);">
-                <dt style="font-weight: 700; font-size: 1.125rem; margin-bottom: 0.5rem; color: var(--text-primary);">AI &amp; agent workflows</dt>
+              <div class="matrix-card"
+                style="padding: 1.5rem; border-radius: var(--radius-lg); border: 1px solid var(--gray-200); background: var(--bg-secondary);">
+                <dt style="font-weight: 700; font-size: 1.125rem; margin-bottom: 0.5rem; color: var(--text-primary);">AI
+                  &amp; agent workflows</dt>
                 <dd style="color: var(--text-secondary); margin: 0;">LLM APIs · MCP · AI Agents · RAG</dd>
               </div>
             </dl>
           </div>
-          
-          <div style="position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+
+          <div
+            style="position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center;">
             <div id="canvasContainer" style="width: 100%; max-width: 500px; aspect-ratio: 1/1; position: relative;">
-              <canvas id="techCloudCanvas" width="600" height="600" class="h-auto max-w-[90vw] rounded-lg touch-pan-y" style="width: 100%; height: 100%;" aria-label="Interactive 3D Icon Cloud" role="img"></canvas>
+              <canvas id="techCloudCanvas" width="600" height="600" class="h-auto max-w-[90vw] rounded-lg touch-pan-y"
+                style="width: 100%; height: 100%;" aria-label="Interactive 3D Icon Cloud" role="img"></canvas>
             </div>
             <div id="techTags" style="display: none;">
-              <a href="projects.html?q=TypeScript"><img src="https://cdn.simpleicons.org/typescript/3178C6" width="60" height="60" alt="TypeScript"></a>
-              <a href="projects.html?q=React"><img src="https://cdn.simpleicons.org/react/61DAFB" width="60" height="60" alt="React"></a>
-              <a href="projects.html?q=Vue"><img src="https://cdn.simpleicons.org/vuedotjs/4FC08D" width="60" height="60" alt="Vue"></a>
-              <a href="projects.html?q=Astro"><img src="https://cdn.simpleicons.org/astro/FF5D01" width="60" height="60" alt="Astro"></a>
-              <a href="projects.html?q=Python"><img src="https://cdn.simpleicons.org/python/3776AB" width="60" height="60" alt="Python"></a>
-              <a href="projects.html?q=Go"><img src="https://cdn.simpleicons.org/go/00ADD8" width="60" height="60" alt="Go"></a>
-              <a href="projects.html?q=Node.js"><img src="https://cdn.simpleicons.org/nodedotjs/339933" width="60" height="60" alt="Node.js"></a>
-              <a href="projects.html?q=C++"><img src="https://cdn.simpleicons.org/cplusplus/00599C" width="60" height="60" alt="C++"></a>
-              <a href="projects.html?q=Docker"><img src="https://cdn.simpleicons.org/docker/2496ED" width="60" height="60" alt="Docker"></a>
-              <a href="projects.html?q=Anthropic"><img src="https://cdn.simpleicons.org/anthropic/D97757" width="60" height="60" alt="Anthropic"></a>
-              <a href="projects.html?q=PyTorch"><img src="https://cdn.simpleicons.org/pytorch/EE4C2C" width="60" height="60" alt="PyTorch"></a>
-              <a href="projects.html?q=PostgreSQL"><img src="https://cdn.simpleicons.org/postgresql/4169E1" width="60" height="60" alt="PostgreSQL"></a>
-              <a href="projects.html?q=Redis"><img src="https://cdn.simpleicons.org/redis/DC382D" width="60" height="60" alt="Redis"></a>
-              <a href="projects.html?q=GraphQL"><img src="https://cdn.simpleicons.org/graphql/E10098" width="60" height="60" alt="GraphQL"></a>
-              <a href="projects.html?q=Tailwind"><img src="https://cdn.simpleicons.org/tailwindcss/06B6D4" width="60" height="60" alt="Tailwind"></a>
-              <a href="projects.html?q=Linux"><img src="https://cdn.simpleicons.org/linux/FCC624" width="60" height="60" alt="Linux"></a>
-              <a href="projects.html?q=Kubernetes"><img src="https://cdn.simpleicons.org/kubernetes/326CE5" width="60" height="60" alt="Kubernetes"></a>
-              <a href="projects.html?q=MongoDB"><img src="https://cdn.simpleicons.org/mongodb/47A248" width="60" height="60" alt="MongoDB"></a>
-              <a href="projects.html?q=Figma"><img src="https://cdn.simpleicons.org/figma/F24E1E" width="60" height="60" alt="Figma"></a>
-              <a href="projects.html?q=Cloudflare"><img src="https://cdn.simpleicons.org/cloudflare/F38020" width="60" height="60" alt="Cloudflare"></a>
-              <a href="projects.html?q=Supabase"><img src="https://cdn.simpleicons.org/supabase/3ECF8E" width="60" height="60" alt="Supabase"></a>
+              <a href="projects.html?q=TypeScript"><img src="https://cdn.simpleicons.org/typescript/3178C6" width="60"
+                  height="60" alt="TypeScript"></a>
+              <a href="projects.html?q=React"><img src="https://cdn.simpleicons.org/react/61DAFB" width="60" height="60"
+                  alt="React"></a>
+              <a href="projects.html?q=Vue"><img src="https://cdn.simpleicons.org/vuedotjs/4FC08D" width="60"
+                  height="60" alt="Vue"></a>
+              <a href="projects.html?q=Astro"><img src="https://cdn.simpleicons.org/astro/FF5D01" width="60" height="60"
+                  alt="Astro"></a>
+              <a href="projects.html?q=Python"><img src="https://cdn.simpleicons.org/python/3776AB" width="60"
+                  height="60" alt="Python"></a>
+              <a href="projects.html?q=Go"><img src="https://cdn.simpleicons.org/go/00ADD8" width="60" height="60"
+                  alt="Go"></a>
+              <a href="projects.html?q=Node.js"><img src="https://cdn.simpleicons.org/nodedotjs/339933" width="60"
+                  height="60" alt="Node.js"></a>
+              <a href="projects.html?q=C++"><img src="https://cdn.simpleicons.org/cplusplus/00599C" width="60"
+                  height="60" alt="C++"></a>
+              <a href="projects.html?q=Docker"><img src="https://cdn.simpleicons.org/docker/2496ED" width="60"
+                  height="60" alt="Docker"></a>
+              <a href="projects.html?q=Anthropic"><img src="https://cdn.simpleicons.org/anthropic/D97757" width="60"
+                  height="60" alt="Anthropic"></a>
+              <a href="projects.html?q=PyTorch"><img src="https://cdn.simpleicons.org/pytorch/EE4C2C" width="60"
+                  height="60" alt="PyTorch"></a>
+              <a href="projects.html?q=PostgreSQL"><img src="https://cdn.simpleicons.org/postgresql/4169E1" width="60"
+                  height="60" alt="PostgreSQL"></a>
+              <a href="projects.html?q=Redis"><img src="https://cdn.simpleicons.org/redis/DC382D" width="60" height="60"
+                  alt="Redis"></a>
+              <a href="projects.html?q=GraphQL"><img src="https://cdn.simpleicons.org/graphql/E10098" width="60"
+                  height="60" alt="GraphQL"></a>
+              <a href="projects.html?q=Tailwind"><img src="https://cdn.simpleicons.org/tailwindcss/06B6D4" width="60"
+                  height="60" alt="Tailwind"></a>
+              <a href="projects.html?q=Linux"><img src="https://cdn.simpleicons.org/linux/FCC624" width="60" height="60"
+                  alt="Linux"></a>
+              <a href="projects.html?q=Kubernetes"><img src="https://cdn.simpleicons.org/kubernetes/326CE5" width="60"
+                  height="60" alt="Kubernetes"></a>
+              <a href="projects.html?q=MongoDB"><img src="https://cdn.simpleicons.org/mongodb/47A248" width="60"
+                  height="60" alt="MongoDB"></a>
+              <a href="projects.html?q=Figma"><img src="https://cdn.simpleicons.org/figma/F24E1E" width="60" height="60"
+                  alt="Figma"></a>
+              <a href="projects.html?q=Cloudflare"><img src="https://cdn.simpleicons.org/cloudflare/F38020" width="60"
+                  height="60" alt="Cloudflare"></a>
+              <a href="projects.html?q=Supabase"><img src="https://cdn.simpleicons.org/supabase/3ECF8E" width="60"
+                  height="60" alt="Supabase"></a>
             </div>
-            <p style="margin-top: 1rem; color: var(--gray-500); font-size: 0.875rem; text-align: center;">Drag to rotate. Hover to pause and inspect.</p>
+            <p style="margin-top: 1rem; color: var(--gray-500); font-size: 0.875rem; text-align: center;">Drag to
+              rotate. Hover to pause and inspect.</p>
           </div>
-          
+
         </div>
       </section>
     </div>
@@ -325,6 +524,7 @@
   <script src="js/components.js"></script>
   <script src="js/three.min.js"></script>
   <script src="js/tagcanvas.min.js"></script>
+  <script src="js/navbar.js" defer></script>
   <script src="js/cursor.js" defer></script>
   <script>
     function initHeroShader() {
@@ -379,11 +579,11 @@
 
       const positions = new Float32Array([
         -1.0, -1.0, 0.0,
-         1.0, -1.0, 0.0,
-        -1.0,  1.0, 0.0,
-         1.0, -1.0, 0.0,
-        -1.0,  1.0, 0.0,
-         1.0,  1.0, 0.0,
+        1.0, -1.0, 0.0,
+        -1.0, 1.0, 0.0,
+        1.0, -1.0, 0.0,
+        -1.0, 1.0, 0.0,
+        1.0, 1.0, 0.0,
       ]);
 
       const geometry = new THREE.BufferGeometry();
@@ -423,7 +623,7 @@
     document.addEventListener('DOMContentLoaded', async () => {
       // Init Hero Background
       initHeroShader();
-      
+
       // Initialize TagCanvas for Tech Cloud
       try {
         const isDark = localStorage.getItem('theme') === 'dark';
@@ -440,10 +640,10 @@
           initial: [0.1, -0.1],
           tooltip: 'native'
         });
-      } catch(e) {
+      } catch (e) {
         console.error("TagCanvas failed to load", e);
       }
-      
+
       // Theme toggle setup
       if (window.ProjTheme) {
         window.ProjTheme.init();
@@ -455,7 +655,7 @@
           const tcColor = nextTheme === 'dark' ? '#ffffff' : '#0F172A';
           TagCanvas.Update('techCloudCanvas');
           TagCanvas.SetSpeed('techCloudCanvas', [0.1, -0.1]);
-        } catch (_) {}
+        } catch (_) { }
       });
 
       // Load Featured Projects
@@ -471,7 +671,7 @@
         } else {
           grid.innerHTML = '<p class="text-muted">No projects found.</p>';
         }
-      } catch(e) {
+      } catch (e) {
         console.error(e);
       }
     });
@@ -484,10 +684,12 @@
           <a href="/" class="footer-brand" aria-label="Home">
             <span class="footer-brand-text">ProjIntelligence</span>
           </a>
-          <p style="font-size: 0.8125rem; color: var(--text-tertiary); margin: 0.35rem 0 0 0;">Intelligent Repository Explorer & Verification Platform • Crafted by Vedant</p>
+          <p style="font-size: 0.8125rem; color: var(--text-tertiary); margin: 0.35rem 0 0 0;">Intelligent Repository
+            Explorer & Verification Platform • Crafted by Vedant</p>
           <div class="footer-status">
             <div class="status-badge">
-              <svg class="status-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <svg class="status-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"
+                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <circle cx="8" cy="8" r="3"></circle>
                 <path d="M8 1v2.5M8 12.5V15M1 8h2.5M12.5 8H15"></path>
               </svg>
@@ -499,7 +701,7 @@
           </div>
         </div>
       </div>
-      
+
       <div class="footer-grid">
         <div class="footer-col">
           <p class="footer-col-title">Navigation</p>
@@ -509,27 +711,29 @@
             <li><a href="admin.html">Admin Panel</a></li>
           </ul>
         </div>
-        
+
         <div class="footer-col">
           <p class="footer-col-title">Connect</p>
           <ul class="footer-links" role="list">
-            <li><a href="https://github.com" target="_blank" rel="noopener noreferrer">GitHub <span class="external-link">↗</span></a></li>
+            <li><a href="https://github.com" target="_blank" rel="noopener noreferrer">GitHub <span
+                  class="external-link">↗</span></a></li>
             <li><a href="#">Contact Support</a></li>
           </ul>
         </div>
-        
+
         <div class="footer-col" style="grid-column: span 2;">
           <p class="footer-col-title">Colophon</p>
           <ul class="footer-colophon" role="list">
             <li><span class="dot bg-blue"></span> <span>Vanilla JS & CSS Architecture</span></li>
             <li><span class="dot bg-green"></span> <span>Flask & SQLite Backend</span></li>
             <li><span class="dot bg-purple"></span> <span>Three.js & WebGL Visuals</span></li>
-            <li style="margin-top: 0.5rem;"><a href="#" class="source-link">Source on GitHub <span class="external-link">↗</span></a></li>
+            <li style="margin-top: 0.5rem;"><a href="#" class="source-link">Source on GitHub <span
+                  class="external-link">↗</span></a></li>
           </ul>
         </div>
       </div>
     </div>
-    
+
     <script>
       function initFooterTimeIndex() {
         const timeEl = document.getElementById('footer-local-time-index');
@@ -544,7 +748,7 @@
               hour12: false,
             });
             timeEl.textContent = formatter.format(now);
-          } catch (_) {}
+          } catch (_) { }
         }
         update();
         setInterval(update, 30000);
@@ -557,4 +761,5 @@
     </script>
   </footer>
 </body>
+
 </html>
