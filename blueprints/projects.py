@@ -29,7 +29,7 @@ def serve_frontend_assets(path):
         return send_from_directory(FRONTEND_DIR, path + '.html')
 
     # Route aliases
-    if path in ('projects', 'discovery'):
+    if path in ('projects', 'discovery', 'compare', 'compare.html'):
         return send_from_directory(FRONTEND_DIR, 'projects.html')
     if path == 'about':
         return send_from_directory(FRONTEND_DIR, 'about.html')
