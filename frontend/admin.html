@@ -3,8 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Panel - Project Intelligence</title>
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>">
+  <title>Admin Panel - ProjIntelligence</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+  <script>
+    (function() {
+      try {
+        var t = localStorage.getItem('theme');
+        if (t) { try { t = JSON.parse(t); } catch(e) {} }
+        if (!t && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) t = 'dark';
+        document.documentElement.setAttribute('data-theme', t === 'dark' ? 'dark' : 'light');
+      } catch (e) {}
+    })();
+  </script>
   
   <link rel="stylesheet" href="css/variables.css">
   <link rel="stylesheet" href="css/base.css">
@@ -55,8 +65,8 @@
             </div>
           </div>
           <div class="login-split__text">
-            <h2>Project Intelligence</h2>
-            <p>Access the central administration panel to manage projects, analyze health scores, and configure platform settings.</p>
+            <h2>ProjIntelligence</h2>
+            <p>Access the central administration panel to manage projects, run deterministic code audits, and configure platform settings.</p>
           </div>
         </div>
         <div class="login-split__right">
@@ -283,6 +293,7 @@
   </div>
 
   <script src="js/utils.js"></script>
+  <script src="js/theme.js"></script>
   <script src="js/api.js"></script>
   <script src="js/components.js"></script>
   <script src="js/admin.js"></script>

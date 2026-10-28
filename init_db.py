@@ -8,27 +8,47 @@ from extensions import db
 from models.project import Project, Technology, Category
 from models.admin import Admin
 
-def init_database():
-    """Initialize database with tables and seed data"""
+def init_database(drop_existing=False):
+    """Initialize database with tables and seed data safely (idempotent)"""
+    import sys
+    if '--reset' in sys.argv or '--drop' in sys.argv:
+        drop_existing = True
+
     app = create_app()
     
     with app.app_context():
+        if drop_existing:
+            print("[*] Dropping existing database tables...")
+            db.drop_all()
+            
         print("[*] Creating database tables...")
-        db.drop_all()  # Clear existing tables
         db.create_all()
         
-        print("[*] Seeding technologies...")
-        seed_technologies()
-        
-        print("[*] Seeding categories...")
-        seed_categories()
-        
-        print("[*] Seeding projects...")
-        seed_projects()
-        
-        print("[*] Seeding admin user...")
+        # Seed technologies if empty
+        if Technology.query.count() == 0:
+            print("[*] Seeding technologies...")
+            seed_technologies()
+        else:
+            print("[*] Technologies already exist. Skipping seed.")
+            
+        # Seed categories if empty
+        if Category.query.count() == 0:
+            print("[*] Seeding categories...")
+            seed_categories()
+        else:
+            print("[*] Categories already exist. Skipping seed.")
+            
+        # Seed default admin user
+        print("[*] Verifying admin user...")
         seed_admin_user()
-        
+            
+        # Seed initial projects if empty
+        if Project.query.count() == 0:
+            print("[*] Seeding projects...")
+            seed_projects()
+        else:
+            print("[*] Projects already exist. Skipping seed.")
+            
         print("[OK] Database initialized successfully!")
 
 def seed_admin_user():
@@ -130,14 +150,14 @@ def seed_projects():
     ml = Category.query.filter_by(slug='machine-learning').first()
     data_science = Category.query.filter_by(slug='data-science').first()
     
-    # Project 1: FEATURED - Student Project Intelligence Platform (THIS PROJECT!)
+    # Project 1: FEATURED - ProjIntelligence Core Platform
     project1 = Project(
-        name='Student Project Intelligence Platform',
-        slug='student-project-intelligence-platform',
-        short_description='AI-powered platform for analyzing and showcasing student coding projects',
-        description='''# Student Project Intelligence Platform
+        name='ProjIntelligence Core Platform',
+        slug='projintelligence-platform',
+        short_description='Intelligent repository explorer, deterministic health auditor & static security scanner',
+        description='''# ProjIntelligence Core Platform
 
-A comprehensive platform designed for college students to showcase their coding projects with intelligent analysis and verification.
+An intelligent repository platform engineered by Vedant Panhalkar to explore codebases, analyze architectural health, and verify software security.
 
 ## Features
 - 🎯 Project showcase dashboard with search and filters

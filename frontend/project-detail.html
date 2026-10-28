@@ -3,8 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Project Repository - Project Intelligence</title>
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>">
+  <title>ProjIntelligence - Repository Inspection & Code Viewer</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+  <script>
+    (function() {
+      try {
+        var t = localStorage.getItem('theme');
+        if (t) { try { t = JSON.parse(t); } catch(e) {} }
+        if (!t && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) t = 'dark';
+        document.documentElement.setAttribute('data-theme', t === 'dark' ? 'dark' : 'light');
+      } catch (e) {}
+    })();
+  </script>
   <link rel="stylesheet" href="css/variables.css">
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/components.css">
@@ -108,6 +118,7 @@
       <nav class="header__nav">
         <a href="index.html" class="nav-link">Home</a>
         <a href="projects.html" class="nav-link">Discovery</a>
+        <a href="compare.html" class="nav-link">Compare</a>
         <a href="about.html" class="nav-link">About</a>
       </nav>
       <div class="header__actions">
@@ -166,6 +177,10 @@
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
               Download Source
             </a>
+            <button id="exportReportBtn" class="btn btn--secondary" style="display: inline-flex; align-items: center; gap: 0.35rem;" title="Print or save executive engineering audit report as PDF">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+              Export PDF
+            </button>
             <button id="copyUrlBtn" class="btn btn--secondary">Share</button>
           </div>
         </div>
@@ -186,6 +201,10 @@
           <button class="repo-tab" data-tab="features">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
             Features
+          </button>
+          <button class="repo-tab" data-tab="audit">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+            Health & Security Audit
           </button>
         </nav>
       </div>
@@ -315,10 +334,18 @@
           <div id="featuresContent"></div>
         </div>
       </section>
+
+      <!-- Health & Security Audit Tab -->
+      <section id="tab-audit" class="tab-pane d-none">
+        <div id="auditContent">
+          <div style="text-align: center; padding: 3rem; color: var(--text-secondary);">Loading health & security audit report...</div>
+        </div>
+      </section>
     </main>
   </div>
 
   <script src="js/utils.js"></script>
+  <script src="js/theme.js"></script>
   <script src="js/api.js"></script>
   <script src="js/project.js"></script>
   <footer class="app-footer" role="contentinfo">
@@ -329,6 +356,7 @@
           <a href="/" class="footer-brand" aria-label="Home">
             <span class="footer-brand-text">ProjIntelligence</span>
           </a>
+          <p style="font-size: 0.8125rem; color: var(--text-tertiary); margin: 0.35rem 0 0 0;">Intelligent Repository Explorer & Verification Platform • Crafted by Vedant</p>
           <div class="footer-status">
             <div class="status-badge">
               <svg class="status-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">

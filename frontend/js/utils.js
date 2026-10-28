@@ -327,7 +327,8 @@ const storage = {
 
   set(key, value) {
     try {
-      localStorage.setItem(key, JSON.stringify(value));
+      const valToStore = typeof value === 'string' ? value : JSON.stringify(value);
+      localStorage.setItem(key, valToStore);
       return true;
     } catch (error) {
       console.warn('Error writing to localStorage:', error);

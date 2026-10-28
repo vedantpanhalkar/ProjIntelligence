@@ -3,9 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>About - Student Project Intelligence Platform</title>
-  <meta name="description" content="Discover how Project Intelligence analyzes, verifies, and showcases student engineering breakthroughs worldwide.">
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>">
+  <title>About - ProjIntelligence Platform</title>
+  <meta name="description" content="Discover how ProjIntelligence analyzes, verifies, and showcases software engineering breakthroughs.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+  <script>
+    (function() {
+      try {
+        var t = localStorage.getItem('theme');
+        if (t) { try { t = JSON.parse(t); } catch(e) {} }
+        if (!t && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) t = 'dark';
+        document.documentElement.setAttribute('data-theme', t === 'dark' ? 'dark' : 'light');
+      } catch (e) {}
+    })();
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -782,11 +792,12 @@
           <rect width="32" height="32" rx="8" fill="var(--primary-500)"/>
           <path d="M16 8L8 24H24L16 8Z" fill="white"/>
         </svg>
-        <h1 class="header__title">Project Intelligence</h1>
+        <h1 class="header__title">ProjIntelligence</h1>
       </div>
       <nav class="header__nav">
         <a href="index.html" class="nav-link">Home</a>
         <a href="projects.html" class="nav-link">Discovery</a>
+        <a href="compare.html" class="nav-link">Compare</a>
         <a href="about.html" class="nav-link nav-link--active">About</a>
       </nav>
       <div class="header__actions">
@@ -804,7 +815,7 @@
     <div class="about-hero__container">
       <div class="about-hero__pill">
         <span class="about-hero__pill-dot"></span>
-        <span>Student Project Intelligence Platform · v2.4</span>
+        <span>ProjIntelligence · Engineered by Vedant</span>
       </div>
 
       <h1 class="about-hero__title">
@@ -813,7 +824,7 @@
       </h1>
 
       <p class="about-hero__subtitle">
-        We are building the definitive intelligence platform to analyze, verify, and celebrate student-led software engineering and breakthroughs from universities worldwide.
+        An intelligent repository platform to inspect codebases, analyze architectural health, and explore software breakthroughs with deterministic audits.
       </p>
 
       <div class="about-hero__actions">
@@ -1096,6 +1107,7 @@
           <a href="index.html" class="footer-brand" aria-label="Home">
             <span class="footer-brand-text">ProjIntelligence</span>
           </a>
+          <p style="font-size: 0.8125rem; color: var(--text-tertiary); margin: 0.35rem 0 0 0;">Intelligent Repository Explorer & Verification Platform • Crafted by Vedant</p>
           <div class="footer-status">
             <div class="status-badge">
               <svg class="status-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -1357,30 +1369,11 @@
       initFooterTime();
     }
 
-    // =========================================================================
-    // THEME CONTROLLER
-    // =========================================================================
-    const themeToggle = document.getElementById('themeToggle');
-    if (themeToggle) {
-      const savedTheme = localStorage.getItem('theme');
-      const isDark = savedTheme === 'dark';
-      if (isDark) {
-        document.documentElement.setAttribute('data-theme', 'dark');
-        themeToggle.checked = true;
-      } else {
-        document.documentElement.setAttribute('data-theme', 'light');
-        themeToggle.checked = false;
-      }
-
-      themeToggle.addEventListener('change', (e) => {
-        if (e.target.checked) {
-          document.documentElement.setAttribute('data-theme', 'dark');
-          localStorage.setItem('theme', 'dark');
-        } else {
-          document.documentElement.setAttribute('data-theme', 'light');
-          localStorage.setItem('theme', 'light');
-        }
-      });
+  </script>
+  <script src="js/theme.js"></script>
+  <script>
+    if (window.ProjTheme) {
+      window.ProjTheme.init();
     }
   </script>
 </body>

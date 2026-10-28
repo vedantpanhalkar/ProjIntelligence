@@ -92,26 +92,24 @@ const createProjectCard = (project) => {
     </div>
 
     <div class="project-card__meta">
-      <div style="display: flex; gap: 1rem; flex: 1;">
-        <div class="project-card__stat">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-            <path d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.791L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25z"/>
-          </svg>
-          ${formattedStars}
-        </div>
-        <div class="project-card__stat">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-            <path d="M5 3.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm0 2.122a2.25 2.25 0 10-1.5 0v.878A2.25 2.25 0 005.75 8.5h1.5v2.128a2.25 2.25 0 101.5 0V8.5h1.5a2.25 2.25 0 002.25-2.25v-.878a2.25 2.25 0 10-1.5 0v.878a.75.75 0 01-.75.75h-4.5A.75.75 0 015 6.25v-.878z"/>
-          </svg>
-          ${formattedForks}
-        </div>
+      <div class="project-card__stat">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+          <path d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.791L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25z"/>
+        </svg>
+        ${formattedStars}
       </div>
-      <div class="project-card__status" style="margin-right: 1rem;">
+      <div class="project-card__stat">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+          <path d="M5 3.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm0 2.122a2.25 2.25 0 10-1.5 0v.878A2.25 2.25 0 005.75 8.5h1.5v2.128a2.25 2.25 0 101.5 0V8.5h1.5a2.25 2.25 0 002.25-2.25v-.878a2.25 2.25 0 10-1.5 0v.878a.75.75 0 01-.75.75h-4.5A.75.75 0 015 6.25v-.878z"/>
+        </svg>
+        ${formattedForks}
+      </div>
+      <div class="project-card__status">
         ${isAvailable 
           ? `<span class="badge badge--success">Available</span>` 
           : `<span class="badge" style="background: var(--warning-bg); color: var(--warning);">Coming Soon</span>`}
       </div>
-      <a href="${isAvailable ? projectDetailUrl : '#'}" class="btn btn--primary" style="height: 32px; padding: 0 12px; font-size: 12px; ${!isAvailable ? 'opacity: 0.5; pointer-events: none;' : ''}">
+      <a href="${isAvailable ? projectDetailUrl : '#'}" class="btn btn--primary project-card__action${!isAvailable ? ' btn--disabled' : ''}">
         View Project
       </a>
     </div>
@@ -312,34 +310,21 @@ const navigateToLogin = () => {
  * Initialize theme toggle functionality
  */
 const initializeThemeToggle = () => {
+  if (window.ProjTheme) {
+    window.ProjTheme.init();
+    return;
+  }
   const themeToggle = utils.$('#themeToggle');
   if (!themeToggle) return;
 
-  // Get saved theme or default to light
   const savedTheme = utils.storage.get('theme', 'light');
   document.documentElement.setAttribute('data-theme', savedTheme);
-  
-  if (savedTheme === 'dark') {
-    themeToggle.checked = true;
-  } else {
-    themeToggle.checked = false;
-  }
+  themeToggle.checked = (savedTheme === 'dark');
 
   themeToggle.addEventListener('change', (e) => {
     const next = e.target.checked ? 'dark' : 'light';
-    
-    // Add transition class for smooth animation
-    document.documentElement.classList.add('theme-transitioning');
     document.documentElement.setAttribute('data-theme', next);
     utils.storage.set('theme', next);
-    
-    // Remove transition class after animation
-    setTimeout(() => {
-      document.documentElement.classList.remove('theme-transitioning');
-    }, 300);
-    
-    // Show toast notification
-    utils.toast.info(`Switched to ${next} mode`, 2000);
   });
 };
 

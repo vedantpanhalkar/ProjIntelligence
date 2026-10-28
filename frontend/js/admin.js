@@ -82,23 +82,17 @@ class AdminApp {
     }
 
     // Theme toggle
-    if (this.elements.themeToggle) {
-      const isDark = localStorage.getItem('theme') === 'dark';
-      if (isDark) {
-        document.documentElement.setAttribute('data-theme', 'dark');
-        this.elements.themeToggle.checked = true;
-      } else {
-        this.elements.themeToggle.checked = false;
-      }
+    if (window.ProjTheme) {
+      window.ProjTheme.init();
+    } else if (this.elements.themeToggle) {
+      const isDark = (localStorage.getItem('theme') || '').includes('dark');
+      document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+      this.elements.themeToggle.checked = isDark;
 
       this.elements.themeToggle.addEventListener('change', (e) => {
-        if (e.target.checked) {
-          document.documentElement.setAttribute('data-theme', 'dark');
-          localStorage.setItem('theme', 'dark');
-        } else {
-          document.documentElement.removeAttribute('data-theme');
-          localStorage.setItem('theme', 'light');
-        }
+        const theme = e.target.checked ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem('theme', theme);
       });
     }
 
@@ -696,6 +690,12 @@ class AdminApp {
           </td>
           <td>
             <div style="display: flex; gap: 0.5rem; justify-content: flex-end; align-items: center;">
+              <button class="btn-action-view reanalyze-project-btn" data-id="${p.id}" title="Re-run Health & Security Audit" style="background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); padding: 0.35rem 0.65rem; border-radius: 6px; font-size: 0.75rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 0.25rem;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+                </svg>
+                Audit
+              </button>
               <a href="project-detail.html?id=${p.id}&from=admin" class="btn-action-view" title="Inspect Codebase & Metrics">
                 Details
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -716,6 +716,30 @@ class AdminApp {
         </tr>
       `;
     }).join('');
+
+    // Attach Re-analyze handlers
+    this.elements.projectsTableBody.querySelectorAll('.reanalyze-project-btn').forEach(btn => {
+      btn.addEventListener('click', async (e) => {
+        const id = e.currentTarget.getAttribute('data-id');
+        const origHTML = e.currentTarget.innerHTML;
+        e.currentTarget.innerHTML = 'Scanning...';
+        e.currentTarget.disabled = true;
+        try {
+          const res = await api.reanalyzeProject(id);
+          if (res.success) {
+            this.loadProjects();
+            this.loadOverview();
+          } else {
+            alert('Re-analysis failed: ' + (res.error?.message || 'Server error'));
+          }
+        } catch (err) {
+          alert('Re-analysis failed: ' + err.message);
+        } finally {
+          e.currentTarget.innerHTML = origHTML;
+          e.currentTarget.disabled = false;
+        }
+      });
+    });
 
     // Attach Delete handlers
     this.elements.projectsTableBody.querySelectorAll('.delete-project-btn').forEach(btn => {

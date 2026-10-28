@@ -25,21 +25,27 @@ def health_check():
 
 @api_bp.route('/projects', methods=['GET'])
 def get_projects():
-    """Get all projects with pagination"""
+    """Get all projects with pagination and multi-facet filters"""
     page = request.args.get('page', 1, type=int)
     per_page_param = request.args.get('per_page') or request.args.get('limit') or 12
     try:
         per_page = int(per_page_param)
     except (ValueError, TypeError):
         per_page = 12
-    search = request.args.get('search', '')
+    search = request.args.get('search', '') or request.args.get('q', '')
     category = request.args.get('category', '')
+    language = request.args.get('language', '') or request.args.get('tech', '')
+    grade = request.args.get('grade', '')
+    sort = request.args.get('sort') or request.args.get('sortBy') or 'featured'
     
     result = project_service.get_all_projects(
         page=page,
         per_page=per_page,
         search=search,
-        category=category
+        category=category,
+        language=language,
+        grade=grade,
+        sort=sort
     )
     
     return jsonify({
@@ -88,6 +94,23 @@ def get_file_content(project_id):
         'data': content
     })
 
+@api_bp.route('/projects/<int:project_id>/analysis', methods=['GET'])
+def get_project_analysis(project_id):
+    """Get detailed deterministic health & security analysis report"""
+    analysis = project_service.get_project_analysis(project_id)
+    if not analysis:
+        return jsonify({
+            'success': False,
+            'error': {
+                'code': 'ANALYSIS_NOT_FOUND',
+                'message': 'Analysis could not be generated for this project.'
+            }
+        }), 404
+    return jsonify({
+        'success': True,
+        'data': analysis
+    })
+
 @api_bp.route('/projects/<int:project_id>/analysis-summary', methods=['GET'])
 def get_project_analysis_summary(project_id):
     """Get project analysis and health metrics breakdown"""
@@ -105,11 +128,44 @@ def get_project_analysis_summary(project_id):
         'forks': project.get('forks', 0),
         'status': project.get('status', 'active'),
         'technologies': [t['name'] for t in project.get('technologies', [])],
-        'categories': [c['name'] for c in project.get('categories', [])]
+        'categories': [c['name'] for c in project.get('categories', [])],
+        'analysis': project.get('analysis')
     }
     return jsonify({
         'success': True,
         'data': summary
+    })
+
+@api_bp.route('/projects/compare', methods=['GET'])
+def compare_projects():
+    """Compare two projects side-by-side"""
+    id1 = request.args.get('id1', type=int)
+    id2 = request.args.get('id2', type=int)
+    
+    if not id1 or not id2:
+        return jsonify({
+            'success': False,
+            'error': {'code': 'INVALID_PARAMS', 'message': 'Both id1 and id2 query parameters are required.'}
+        }), 400
+        
+    p1 = project_service.get_project_by_id(id1)
+    p2 = project_service.get_project_by_id(id2)
+    
+    if not p1 or not p2:
+        return jsonify({
+            'success': False,
+            'error': {'code': 'PROJECT_NOT_FOUND', 'message': 'One or both projects could not be found.'}
+        }), 404
+        
+    a1 = project_service.get_project_analysis(id1) or {}
+    a2 = project_service.get_project_analysis(id2) or {}
+    
+    return jsonify({
+        'success': True,
+        'data': {
+            'project1': {**p1, 'analysis': a1},
+            'project2': {**p2, 'analysis': a2}
+        }
     })
 
 @api_bp.route('/projects/<int:project_id>/download', methods=['GET'])

@@ -4,6 +4,7 @@ Admin Blueprint - Admin Authentication and Management
 
 import os
 import re
+import json
 import zipfile
 import shutil
 from datetime import datetime
@@ -375,7 +376,17 @@ def upload_project():
                 except Exception:
                     pass
 
-    # 5. Create & Save Project
+    # 5. Run Deterministic Health & Security Analysis
+    from services.analyzer_service import ProjectAnalyzerService
+    analyzer = ProjectAnalyzerService()
+    analysis_report = analyzer.analyze_repository(target_dir)
+
+    health_score = analysis_report['overall_score']
+    documentation_score = round(analysis_report['breakdown']['documentation']['score'] * 5.0, 1)
+    code_quality_score = round(analysis_report['breakdown']['maintainability']['score'] * 5.0, 1)
+    analysis_data_str = json.dumps(analysis_report)
+
+    # 6. Create & Save Project
     project = Project(
         name=name,
         slug=slug,
@@ -385,9 +396,10 @@ def upload_project():
         repo_path=target_dir,
         status='active',
         is_featured=is_featured,
-        health_score=96.0 if readme_content else 88.0,
-        code_quality_score=94.0,
-        documentation_score=92.0 if readme_content else 75.0,
+        health_score=health_score,
+        code_quality_score=code_quality_score,
+        documentation_score=documentation_score,
+        analysis_data=analysis_data_str,
         stars=0,
         forks=0
     )
@@ -483,7 +495,7 @@ def update_project(project_id):
 
 @admin_bp.route('/projects/<int:project_id>', methods=['DELETE'])
 def delete_project(project_id):
-    """Delete project (admin only)"""
+    """Delete project and remove uploaded files from disk (admin only)"""
     admin = get_current_admin_user()
     if not admin:
         return jsonify({'success': False, 'error': {'code': 'UNAUTHORIZED', 'message': 'Not authenticated'}}), 401
@@ -499,12 +511,22 @@ def delete_project(project_id):
         }), 404
     
     try:
+        repo_path = project.repo_path
         db.session.delete(project)
         db.session.commit()
         
+        # Safely remove project files from disk if located inside upload folder
+        if repo_path and os.path.exists(repo_path):
+            upload_folder = current_app.config.get('UPLOAD_FOLDER', os.path.join(current_app.root_path, 'uploads'))
+            try:
+                if os.path.commonpath([os.path.normcase(os.path.abspath(repo_path)), os.path.normcase(os.path.abspath(upload_folder))]) == os.path.normcase(os.path.abspath(upload_folder)):
+                    shutil.rmtree(repo_path, ignore_errors=True)
+            except Exception:
+                pass
+        
         return jsonify({
             'success': True,
-            'data': {'message': 'Project deleted successfully'}
+            'data': {'message': 'Project and repository files deleted successfully'}
         })
     
     except Exception as e:
@@ -516,3 +538,43 @@ def delete_project(project_id):
                 'message': str(e)
             }
         }), 500
+
+@admin_bp.route('/projects/<int:project_id>/reanalyze', methods=['POST'])
+def reanalyze_project(project_id):
+    """Re-run deterministic health & security analysis on an existing project (admin only)"""
+    admin = get_current_admin_user()
+    if not admin:
+        return jsonify({'success': False, 'error': {'code': 'UNAUTHORIZED', 'message': 'Not authenticated'}}), 401
+    
+    report = project_service.analyze_and_update_project(project_id)
+    if not report:
+        return jsonify({
+            'success': False,
+            'error': {'code': 'NOT_FOUND', 'message': 'Project files not found for analysis'}
+        }), 404
+    
+    project = Project.query.get(project_id)
+    return jsonify({
+        'success': True,
+        'data': {
+            'project': project.to_dict(),
+            'analysis': report
+        }
+    })
+
+@admin_bp.route('/projects/reanalyze-all', methods=['POST'])
+def reanalyze_all_projects():
+    """Batch re-analyze all indexed projects on disk (admin only)"""
+    admin = get_current_admin_user()
+    if not admin:
+        return jsonify({'success': False, 'error': {'code': 'UNAUTHORIZED', 'message': 'Not authenticated'}}), 401
+    
+    results = project_service.reanalyze_all_projects()
+    return jsonify({
+        'success': True,
+        'data': {
+            'total_analyzed': len(results),
+            'projects': results
+        }
+    })
+

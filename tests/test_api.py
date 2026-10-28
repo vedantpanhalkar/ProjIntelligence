@@ -155,4 +155,93 @@ def test_admin_upload_project(client):
     assert 'health_score' in project_obj
     assert project_obj['status'] == 'active'
 
+def test_filtering_and_sorting(client):
+    # Test sort options
+    res_score = client.get('/api/v1/projects?sort=health_score')
+    assert res_score.status_code == 200
+    assert 'projects' in res_score.json['data']
+
+    # Test grade filter
+    res_grade = client.get('/api/v1/projects?grade=A')
+    assert res_grade.status_code == 200
+
+    # Test search param
+    res_search = client.get('/api/v1/projects?search=Test')
+    assert res_grade.status_code == 200
+
+def test_analyzer_service_deterministic():
+    import tempfile
+    import os
+    import shutil
+    from services.analyzer_service import ProjectAnalyzerService
+
+    temp_dir = tempfile.mkdtemp()
+    try:
+        # Create a mock repository with a README, tests, .gitignore, and sample Python file
+        with open(os.path.join(temp_dir, 'README.md'), 'w') as f:
+            f.write("# Awesome Project\n\n## Getting Started\nRun `python app.py` to start.")
+        with open(os.path.join(temp_dir, '.gitignore'), 'w') as f:
+            f.write("*.pyc\n__pycache__/\n")
+        with open(os.path.join(temp_dir, 'requirements.txt'), 'w') as f:
+            f.write("flask>=3.0.0\n")
+        os.makedirs(os.path.join(temp_dir, 'tests'), exist_ok=True)
+        with open(os.path.join(temp_dir, 'tests', 'test_main.py'), 'w') as f:
+            f.write("def test_ok(): assert True\n")
+        with open(os.path.join(temp_dir, 'app.py'), 'w') as f:
+            f.write("import os\nprint('Hello world')\n")
+
+        analyzer = ProjectAnalyzerService()
+        report = analyzer.analyze_repository(temp_dir)
+
+        assert report['overall_score'] > 60.0
+        assert report['grade'] in ['A', 'B', 'C']
+        assert report['security']['status'] == 'clean'
+        assert report['statistics']['has_readme'] is True
+        assert report['statistics']['has_tests'] is True
+        assert 'breakdown' in report
+        assert 'recommendations' in report
+    finally:
+        shutil.rmtree(temp_dir, ignore_errors=True)
+
+def test_analyzer_security_scanner_flags_secrets():
+    import tempfile
+    import os
+    import shutil
+    from services.analyzer_service import ProjectAnalyzerService
+
+    temp_dir = tempfile.mkdtemp()
+    try:
+        with open(os.path.join(temp_dir, 'config.py'), 'w') as f:
+            f.write("AWS_ACCESS_KEY = 'AKIA1234567890ABCDEF'\n")
+            f.write("eval('malicious_code')\n")
+
+        analyzer = ProjectAnalyzerService()
+        report = analyzer.analyze_repository(temp_dir)
+
+        assert report['security']['status'] == 'danger'
+        assert report['security']['total_issues'] >= 2
+        findings = report['security']['findings']
+        ids = [find['id'] for find in findings]
+        assert 'SEC_AWS_KEY' in ids
+        assert 'SEC_PYTHON_EVAL' in ids
+    finally:
+        shutil.rmtree(temp_dir, ignore_errors=True)
+
+def test_compare_projects(client):
+    res_err = client.get('/api/v1/projects/compare')
+    assert res_err.status_code == 400
+
+    res_all = client.get('/api/v1/projects')
+    projects = res_all.json['data']['projects']
+    if len(projects) >= 2:
+        id1 = projects[0]['id']
+        id2 = projects[1]['id']
+        res_comp = client.get(f'/api/v1/projects/compare?id1={id1}&id2={id2}')
+        assert res_comp.status_code == 200
+        assert 'project1' in res_comp.json['data']
+        assert 'project2' in res_comp.json['data']
+        assert res_comp.json['data']['project1']['id'] == id1
+        assert res_comp.json['data']['project2']['id'] == id2
+
+
 

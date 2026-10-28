@@ -6,28 +6,69 @@ from models.project import Project, Technology, Category
 from extensions import db
 import os
 import json
+from services.analyzer_service import ProjectAnalyzerService
 
 class ProjectService:
     """Project service for business logic"""
     
-    def get_all_projects(self, page=1, per_page=12, search='', category=''):
-        """Get all projects with pagination and filters"""
+    def get_all_projects(self, page=1, per_page=12, search='', category='', language='', grade='', sort='featured'):
+        """Get all projects with pagination and multi-facet filters"""
         query = Project.query
         
-        # Apply filters
+        # Apply search filter
         if search:
             query = query.filter(
                 db.or_(
                     Project.name.ilike(f'%{search}%'),
-                    Project.short_description.ilike(f'%{search}%')
+                    Project.short_description.ilike(f'%{search}%'),
+                    Project.description.ilike(f'%{search}%')
                 )
             )
         
+        # Apply category filter
         if category:
             query = query.join(Project.categories).filter(Category.slug == category)
         
-        # Order by featured first, then by date
-        query = query.order_by(Project.is_featured.desc(), Project.created_at.desc())
+        # Apply language / technology filter
+        if language:
+            # Avoid duplicate joins if both category and language are supplied
+            query = query.join(Project.technologies).filter(
+                db.or_(
+                    Technology.slug == language.lower(),
+                    Technology.name.ilike(language)
+                )
+            )
+        
+        # Apply health grade filter
+        if grade:
+            grade_clean = grade.strip().upper().replace('+', '')
+            if grade_clean == 'A':
+                query = query.filter(Project.health_score >= 90.0)
+            elif grade_clean == 'B':
+                query = query.filter(Project.health_score >= 80.0, Project.health_score < 90.0)
+            elif grade_clean == 'C':
+                query = query.filter(Project.health_score >= 70.0, Project.health_score < 80.0)
+            elif grade_clean == 'D':
+                query = query.filter(Project.health_score >= 60.0, Project.health_score < 70.0)
+            elif grade_clean == 'F':
+                query = query.filter(Project.health_score < 60.0)
+        
+        # Order by selected sort option
+        if sort in ('score_desc', 'score', 'health_score'):
+            query = query.order_by(Project.health_score.desc(), Project.created_at.desc())
+        elif sort == 'score_asc':
+            query = query.order_by(Project.health_score.asc())
+        elif sort in ('newest', 'date', 'created_at'):
+            query = query.order_by(Project.created_at.desc())
+        elif sort == 'oldest':
+            query = query.order_by(Project.created_at.asc())
+        elif sort == 'stars':
+            query = query.order_by(Project.stars.desc(), Project.created_at.desc())
+        elif sort == 'name':
+            query = query.order_by(Project.name.asc())
+        else:
+            # Default: Featured first, then newest
+            query = query.order_by(Project.is_featured.desc(), Project.created_at.desc())
         
         # Paginate
         pagination = query.paginate(page=page, per_page=per_page, error_out=False)
@@ -95,7 +136,8 @@ class ProjectService:
                         'path': item_rel_path.replace('\\', '/'),
                         'type': 'folder' if is_dir else 'file',
                         'extension': ext,
-                        'size': os.path.getsize(item_full_path) if not is_dir else 0
+                        'size': os.path.getsize(item_full_path) if not is_dir else 0,
+                        'description': ProjectAnalyzerService.get_file_description(item, is_dir, item_rel_path)
                     }
                     if is_dir:
                         file_node['children'] = build_tree(item_full_path, item_rel_path, depth + 1)
@@ -204,3 +246,43 @@ class ProjectService:
             'categories': [c.to_dict() for c in categories],
             'technologies': [t.to_dict() for t in technologies]
         }
+
+    def analyze_and_update_project(self, project_id):
+        """Run ProjectAnalyzerService on project repository and persist scores & report"""
+        project = Project.query.get(project_id)
+        if not project or not project.repo_path or not os.path.exists(project.repo_path):
+            return None
+        
+        from services.analyzer_service import ProjectAnalyzerService
+        analyzer = ProjectAnalyzerService()
+        report = analyzer.analyze_repository(project.repo_path)
+        
+        project.health_score = report['overall_score']
+        # Scale 20 pt scores to 100 pt representation for backward compatibility
+        project.documentation_score = round(report['breakdown']['documentation']['score'] * 5.0, 1)
+        project.code_quality_score = round(report['breakdown']['maintainability']['score'] * 5.0, 1)
+        project.analysis_data = json.dumps(report)
+        
+        db.session.commit()
+        return report
+
+    def get_project_analysis(self, project_id):
+        """Get full analysis report for a project, generating if not present"""
+        project = Project.query.get(project_id)
+        if not project:
+            return None
+        
+        analysis = project.get_analysis()
+        if not analysis and project.repo_path and os.path.exists(project.repo_path):
+            analysis = self.analyze_and_update_project(project_id)
+        return analysis
+
+    def reanalyze_all_projects(self):
+        """Re-analyze all active projects with local files"""
+        projects = Project.query.all()
+        results = []
+        for p in projects:
+            if p.repo_path and os.path.exists(p.repo_path):
+                rep = self.analyze_and_update_project(p.id)
+                results.append({'id': p.id, 'name': p.name, 'score': rep['overall_score'] if rep else 0})
+        return results

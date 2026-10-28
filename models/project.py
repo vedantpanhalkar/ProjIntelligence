@@ -36,10 +36,11 @@ class Project(db.Model):
     stars = db.Column(db.Integer, default=0)
     forks = db.Column(db.Integer, default=0)
     
-    # Scoring (optional for now)
+    # Scoring
     health_score = db.Column(db.Float, default=0.0)
     code_quality_score = db.Column(db.Float, default=0.0)
     documentation_score = db.Column(db.Float, default=0.0)
+    analysis_data = db.Column(db.Text, nullable=True)  # JSON-encoded analysis report
     
     # Status
     status = db.Column(db.String(50), default='active')  # active, coming_soon, archived
@@ -53,6 +54,16 @@ class Project(db.Model):
     technologies = db.relationship('Technology', secondary=project_technologies, backref='projects')
     categories = db.relationship('Category', secondary=project_categories, backref='projects')
     
+    def get_analysis(self):
+        """Parse stored JSON analysis or return None"""
+        if self.analysis_data:
+            try:
+                import json
+                return json.loads(self.analysis_data)
+            except Exception:
+                return None
+        return None
+
     def to_dict(self, include_files=False):
         """Convert to dictionary"""
         data = {
@@ -67,6 +78,7 @@ class Project(db.Model):
             'health_score': self.health_score,
             'code_quality_score': self.code_quality_score,
             'documentation_score': self.documentation_score,
+            'analysis': self.get_analysis(),
             'status': self.status,
             'is_featured': self.is_featured,
             'has_local_files': bool(self.repo_path and os.path.exists(self.repo_path)),

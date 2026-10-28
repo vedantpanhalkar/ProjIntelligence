@@ -5,15 +5,24 @@ Main Flask Application Entry Point
 
 from flask import Flask
 from flask_cors import CORS
-from config import Config
+from config import Config, ProductionConfig, DevelopmentConfig
 from extensions import db
 import os
 
-def create_app(config_class=Config):
+def create_app(config_class=None):
     """Application factory pattern"""
+    if config_class is None:
+        env = os.environ.get('FLASK_ENV', '').lower()
+        config_class = ProductionConfig if env == 'production' else Config
+
     app = Flask(__name__)
     app.config.from_object(config_class)
     app.secret_key = app.config['SECRET_KEY']  # For session management
+    
+    # Ensure upload directory exists
+    upload_folder = app.config.get('UPLOAD_FOLDER')
+    if upload_folder:
+        os.makedirs(upload_folder, exist_ok=True)
     
     # Initialize extensions
     CORS(app, resources={
@@ -34,12 +43,18 @@ def create_app(config_class=Config):
     app.register_blueprint(admin_bp, url_prefix='/api/v1/admin')
     app.register_blueprint(projects_bp)
     
-    # Create database tables
+    # Create database tables & apply lightweight migrations
     with app.app_context():
-        # Import all models to ensure they're registered
         from models.admin import Admin
+        from models.project import Project
         db.create_all()
-        print("Database tables created successfully!")
+        try:
+            with db.engine.connect() as conn:
+                conn.execute(db.text("ALTER TABLE projects ADD COLUMN analysis_data TEXT"))
+                conn.commit()
+        except Exception:
+            pass
+        print("Database tables verified successfully!")
     
     return app
 

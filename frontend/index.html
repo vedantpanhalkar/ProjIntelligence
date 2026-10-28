@@ -3,8 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Student Project Intelligence Platform</title>
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>">
+  <title>ProjIntelligence - Intelligent Repository Explorer & Code Verification</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+  <script>
+    (function() {
+      try {
+        var t = localStorage.getItem('theme');
+        if (t) { try { t = JSON.parse(t); } catch(e) {} }
+        if (!t && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) t = 'dark';
+        document.documentElement.setAttribute('data-theme', t === 'dark' ? 'dark' : 'light');
+      } catch (e) {}
+    })();
+  </script>
   
   <link rel="stylesheet" href="css/variables.css">
   <link rel="stylesheet" href="css/base.css">
@@ -186,11 +196,12 @@
           <rect width="32" height="32" rx="8" fill="var(--primary-500)"/>
           <path d="M16 8L8 24H24L16 8Z" fill="white"/>
         </svg>
-        <h1 class="header__title">Project Intelligence</h1>
+        <h1 class="header__title">ProjIntelligence</h1>
       </div>
       <nav class="header__nav">
         <a href="index.html" class="nav-link nav-link--active">Home</a>
         <a href="projects.html" class="nav-link">Discovery</a>
+        <a href="compare.html" class="nav-link">Compare</a>
         <a href="about.html" class="nav-link">About</a>
       </nav>
       <div class="header__actions">
@@ -217,8 +228,12 @@
     <section class="hero" id="heroSection">
       <canvas id="heroCanvas" class="hero__canvas"></canvas>
       <div class="container relative z-10">
-        <h2 class="hero__title">Discover Student Innovations</h2>
-        <p class="hero__subtitle">Find, analyze, and verify computer science projects built by students across various domains and technologies.</p>
+        <div style="display: inline-flex; align-items: center; gap: 0.6rem; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.18); padding: 0.4rem 1.1rem; border-radius: 99px; margin-bottom: 1.5rem; font-size: 0.85rem; font-weight: 600; color: #f1f5f9; backdrop-filter: blur(12px);">
+          <span style="width: 8px; height: 8px; border-radius: 50%; background: #10b981; box-shadow: 0 0 10px #10b981;"></span>
+          <span>Engineered by Vedant • ProjIntelligence</span>
+        </div>
+        <h2 class="hero__title">Explore Intelligent Software Repositories</h2>
+        <p class="hero__subtitle">An authentic repository browser with automated AST technology detection, deterministic health scores, and static security audits.</p>
         
         <form class="hero__search" action="projects.html" method="GET">
           <input type="search" name="q" class="hero__search-input" placeholder="Search for projects, tech stacks, or domains..." required>
@@ -306,6 +321,7 @@
   </main>
 
   <script src="js/utils.js"></script>
+  <script src="js/theme.js"></script>
   <script src="js/api.js"></script>
   <script src="js/components.js"></script>
   <script src="js/three.min.js"></script>
@@ -429,43 +445,17 @@
       }
       
       // Theme toggle setup
-      const themeToggle = document.getElementById('themeToggle');
-      const isDark = localStorage.getItem('theme') === 'dark';
-      if (isDark) {
-        document.documentElement.setAttribute('data-theme', 'dark');
-        themeToggle.checked = true;
-      } else {
-        themeToggle.checked = false;
+      if (window.ProjTheme) {
+        window.ProjTheme.init();
       }
-      themeToggle.addEventListener('change', (e) => {
-        const nextTheme = e.target.checked ? 'dark' : 'light';
-        if (e.target.checked) {
-          document.documentElement.setAttribute('data-theme', 'dark');
-          localStorage.setItem('theme', 'dark');
-        } else {
-          document.documentElement.removeAttribute('data-theme');
-          localStorage.setItem('theme', 'light');
-        }
-        
-        // Update TagCanvas Color
+
+      window.addEventListener('themechange', (e) => {
+        const nextTheme = e.detail ? e.detail.theme : 'light';
         try {
           const tcColor = nextTheme === 'dark' ? '#ffffff' : '#0F172A';
           TagCanvas.Update('techCloudCanvas');
           TagCanvas.SetSpeed('techCloudCanvas', [0.1, -0.1]);
-          // To update color we must restart it or update options
-          TagCanvas.Start('techCloudCanvas', 'techTags', {
-            imageMode: 'image',
-            imageScale: 1.5,
-            imagePadding: 4,
-            shape: 'sphere',
-            outlineColour: 'transparent',
-            reverse: true,
-            depth: 0.8,
-            maxSpeed: 0.05,
-            initial: [0.1, -0.1],
-            tooltip: 'native'
-          });
-        } catch(err) {}
+        } catch (_) {}
       });
 
       // Load Featured Projects
@@ -494,6 +484,7 @@
           <a href="/" class="footer-brand" aria-label="Home">
             <span class="footer-brand-text">ProjIntelligence</span>
           </a>
+          <p style="font-size: 0.8125rem; color: var(--text-tertiary); margin: 0.35rem 0 0 0;">Intelligent Repository Explorer & Verification Platform • Crafted by Vedant</p>
           <div class="footer-status">
             <div class="status-badge">
               <svg class="status-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">

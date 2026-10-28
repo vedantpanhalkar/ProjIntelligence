@@ -6,8 +6,22 @@
 class APIClient {
   constructor(baseURL) {
     if (!baseURL) {
-      const host = (typeof window !== 'undefined' && window.location && window.location.hostname) ? window.location.hostname : 'localhost';
-      baseURL = `http://${host}:5000/api/v1`;
+      if (typeof window !== 'undefined' && window.location) {
+        const host = window.location.hostname || 'localhost';
+        const isLocal = host === 'localhost' || host === '127.0.0.1';
+        if (isLocal && window.location.port === '5500') {
+          baseURL = `http://${host}:5000/api/v1`;
+        } else if (isLocal && window.location.port === '5000') {
+          baseURL = '/api/v1';
+        } else if (isLocal) {
+          baseURL = `http://${host}:5000/api/v1`;
+        } else {
+          // In production (Render, custom domain), use same-origin relative API path
+          baseURL = '/api/v1';
+        }
+      } else {
+        baseURL = 'http://localhost:5000/api/v1';
+      }
     }
     this.baseURL = baseURL;
     this.token = this.getToken();
@@ -155,10 +169,24 @@ class APIClient {
   }
 
   /**
-   * Get project analysis summary
+   * Get project full health & security analysis report
    */
   async getProjectAnalysis(id) {
-    return this.get(`/projects/${id}/analysis-summary`);
+    return this.get(`/projects/${id}/analysis`);
+  }
+
+  /**
+   * Compare two projects side by side
+   */
+  async compareProjects(id1, id2) {
+    return this.get('/projects/compare', { id1, id2 });
+  }
+
+  /**
+   * Re-run analysis on a project (admin only)
+   */
+  async reanalyzeProject(id) {
+    return this.post(`/admin/projects/${id}/reanalyze`);
   }
 
   /**

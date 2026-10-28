@@ -309,6 +309,7 @@ class DashboardApp {
    */
   populateFilters(filters) {
     const { categories = [], languages = [], technologies = [] } = filters;
+    const availableLangs = (languages && languages.length > 0) ? languages : technologies;
     
     if (this.elements.categoryFilter) {
       components.populateFilterSelect(
@@ -321,7 +322,7 @@ class DashboardApp {
     if (this.elements.languageFilter) {
       components.populateFilterSelect(
         this.elements.languageFilter, 
-        languages, 
+        availableLangs, 
         'All Languages'
       );
     }

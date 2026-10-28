@@ -4,8 +4,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Discover Student Code Projects">
-  <title>Projects Discovery - Project Intelligence</title>
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>">
+  <title>Discovery - ProjIntelligence</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+  <script>
+    (function() {
+      try {
+        var t = localStorage.getItem('theme');
+        if (t) { try { t = JSON.parse(t); } catch(e) {} }
+        if (!t && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) t = 'dark';
+        document.documentElement.setAttribute('data-theme', t === 'dark' ? 'dark' : 'light');
+      } catch (e) {}
+    })();
+  </script>
   
   <link rel="stylesheet" href="css/variables.css">
   <link rel="stylesheet" href="css/base.css">
@@ -109,11 +119,12 @@
           <rect width="32" height="32" rx="8" fill="var(--primary-500)"/>
           <path d="M16 8L8 24H24L16 8Z" fill="white"/>
         </svg>
-        <h1 class="header__title">Project Intelligence</h1>
+        <h1 class="header__title">ProjIntelligence</h1>
       </div>
       <nav class="header__nav">
         <a href="index.html" class="nav-link">Home</a>
         <a href="projects.html" class="nav-link nav-link--active">Discovery</a>
+        <a href="compare.html" class="nav-link">Compare</a>
         <a href="about.html" class="nav-link">About</a>
       </nav>
       <div class="header__actions">
@@ -212,6 +223,7 @@
   </main>
 
   <script src="js/utils.js"></script>
+  <script src="js/theme.js"></script>
   <script src="js/api.js"></script>
   <script src="js/components.js"></script>
   <script src="js/dashboard.js"></script>
@@ -254,6 +266,7 @@
           <a href="/" class="footer-brand" aria-label="Home">
             <span class="footer-brand-text">ProjIntelligence</span>
           </a>
+          <p style="font-size: 0.8125rem; color: var(--text-tertiary); margin: 0.35rem 0 0 0;">Intelligent Repository Explorer & Verification Platform • Crafted by Vedant</p>
           <div class="footer-status">
             <div class="status-badge">
               <svg class="status-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">

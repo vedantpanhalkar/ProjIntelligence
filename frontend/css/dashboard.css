@@ -280,6 +280,7 @@
   margin-top: var(--space-4);
   padding-top: var(--space-4);
   border-top: 1px solid var(--gray-200);
+  flex-wrap: wrap;
 }
 
 .project-card__stat {
@@ -288,6 +289,21 @@
   gap: var(--space-2);
   font-size: var(--text-sm);
   color: var(--gray-600);
+}
+
+.project-card__status {
+  display: flex;
+  align-items: center;
+}
+
+.project-card__action {
+  margin-left: auto;
+}
+
+.btn--disabled {
+  opacity: 0.5;
+  pointer-events: none;
+  cursor: not-allowed;
 }
 
 .project-card__tags {
@@ -399,6 +415,15 @@
 }
 
 /* ===== RESPONSIVE DESIGN ===== */
+
+/* Large tablets and below */
+@media (max-width: 1024px) {
+  .projects-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  }
+}
+
+/* Tablets */
 @media (max-width: 768px) {
   .header__title {
     font-size: var(--text-lg);
@@ -423,6 +448,135 @@
   .footer__content {
     flex-direction: column;
     text-align: center;
+  }
+  
+  /* Responsive project card footer - wrap to two rows */
+  .project-card__meta {
+    gap: var(--space-3);
+  }
+  
+  .project-card__stat {
+    font-size: var(--text-xs);
+  }
+  
+  /* Keep status and button on same line */
+  .project-card__status {
+    margin-left: auto;
+  }
+  
+  /* When it wraps, button takes full width of new row */
+  .project-card__action {
+    flex: 1 1 100%;
+    margin-left: 0;
+    min-width: 140px;
+  }
+}
+
+/* Mobile phones */
+@media (max-width: 480px) {
+  .header__container {
+    padding: 0 var(--space-3);
+  }
+  
+  .header__brand {
+    gap: var(--space-2);
+  }
+  
+  .header__title {
+    font-size: var(--text-base);
+  }
+  
+  .btn--secondary {
+    font-size: var(--text-xs);
+    padding: 0 var(--space-3);
+  }
+  
+  .projects-grid {
+    gap: var(--space-4);
+  }
+  
+  .project-card {
+    padding: var(--space-4);
+  }
+  
+  .project-card__title {
+    font-size: var(--text-base);
+  }
+  
+  .project-card__description {
+    font-size: var(--text-xs);
+  }
+  
+  .project-card__meta {
+    gap: var(--space-2);
+  }
+  
+  .project-card__stat {
+    font-size: 0.6875rem;
+    gap: var(--space-1);
+  }
+  
+  .project-card__stat svg {
+    width: 14px;
+    height: 14px;
+  }
+  
+  .badge {
+    font-size: 0.625rem;
+    padding: var(--space-1) var(--space-2);
+  }
+  
+  /* Full width button on mobile */
+  .project-card__action {
+    width: 100%;
+    flex: 1 1 100%;
+    text-align: center;
+  }
+  
+  .btn--primary {
+    font-size: var(--text-xs);
+    height: 36px;
+    padding: 0 var(--space-3);
+  }
+  
+  .pagination {
+    gap: var(--space-1);
+  }
+  
+  .pagination__page {
+    width: 36px;
+    height: 36px;
+    font-size: var(--text-xs);
+  }
+  
+  .pagination__btn {
+    font-size: var(--text-xs);
+    padding: var(--space-2) var(--space-3);
+  }
+}
+
+/* Small mobile phones */
+@media (max-width: 360px) {
+  /* Stack everything vertically */
+  .project-card__meta {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-3);
+  }
+  
+  .project-card__stat,
+  .project-card__status {
+    width: 100%;
+    justify-content: flex-start;
+  }
+  
+  .project-card__status {
+    margin-left: 0;
+  }
+  
+  .project-card__action {
+    width: 100%;
+    margin-left: 0;
   }
 }
 /* ===== GLASS MORPHISM EFFECTS ===== */
@@ -683,7 +837,79 @@ html {
   border-color: var(--gray-700);
 }
 
+[data-theme="dark"] .project-card__meta {
+  border-top-color: var(--gray-700);
+}
+
 [data-theme="dark"] .stat-card {
   background: var(--gray-800);
   border-color: var(--gray-700);
+}
+
+/* ==========================================================================
+   Executive Engineering Audit Report - Print & PDF Export Styles
+   ========================================================================== */
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #111827 !important;
+    font-size: 11pt !important;
+  }
+
+  /* Hide interactive, navigational, and canvas elements */
+  nav,
+  .navbar,
+  .repo-actions,
+  .repo-tabs,
+  .repo-header__back,
+  #projectBackBtn,
+  #exportReportBtn,
+  #copyUrlBtn,
+  #downloadBtn,
+  #githubBtn,
+  .footer,
+  footer,
+  #threeCanvas,
+  #three-canvas,
+  .theme-toggle {
+    display: none !important;
+  }
+
+  /* Show only the project header and audit content */
+  .repo-header {
+    border-bottom: 2px solid #3b82f6 !important;
+    margin-bottom: 1.5rem !important;
+    padding-bottom: 1rem !important;
+  }
+
+  .repo-title {
+    font-size: 20pt !important;
+    color: #0f172a !important;
+  }
+
+  .repo-description {
+    font-size: 11pt !important;
+    color: #475569 !important;
+  }
+
+  /* Ensure audit tab is fully visible and nicely arranged */
+  #tab-audit {
+    display: block !important;
+  }
+
+  /* Avoid page breaks inside audit cards */
+  .tab-pane > div,
+  .audit-card,
+  div[style*="border-radius"] {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+    box-shadow: none !important;
+    border: 1px solid #cbd5e1 !important;
+    background: #ffffff !important;
+  }
+
+  @page {
+    margin: 1.5cm;
+    size: A4 portrait;
+  }
 }
