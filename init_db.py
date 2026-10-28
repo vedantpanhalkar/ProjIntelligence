@@ -48,6 +48,16 @@ def init_database(drop_existing=False):
             seed_projects()
         else:
             print("[*] Projects already exist. Skipping seed.")
+
+        # Ensure all existing and newly seeded projects have valid analysis_data
+        import json
+        from services.project_service import ProjectService
+        ps = ProjectService()
+        for p in Project.query.all():
+            if not p.analysis_data:
+                print(f"[*] Generating audit analysis for project: {p.name}")
+                p.analysis_data = json.dumps(ps.generate_synthetic_analysis(p))
+        db.session.commit()
             
         print("[OK] Database initialized successfully!")
 

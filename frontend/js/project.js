@@ -98,11 +98,15 @@ class ProjectApp {
 
     // Export PDF / Audit Report Print Handler
     if (this.elements.exportReportBtn) {
-      this.elements.exportReportBtn.addEventListener('click', () => {
+      this.elements.exportReportBtn.addEventListener('click', async () => {
         this.switchTab('audit');
+        // Ensure audit report content is loaded and populated before print dialog
+        if (!this.elements.auditContent || !this.elements.auditContent.innerHTML || this.elements.auditContent.innerHTML.includes('No audit analysis')) {
+          await this.loadAuditData();
+        }
         setTimeout(() => {
           window.print();
-        }, 200);
+        }, 300);
       });
     }
 
@@ -669,7 +673,10 @@ class ProjectApp {
       const maxScore = data.max_score || 20;
       const pct = Math.round((pScore / maxScore) * 100);
       const barColor = pct >= 80 ? '#10b981' : (pct >= 60 ? '#f59e0b' : '#ef4444');
-      const findingsList = (data.findings || []).map(f => `<li style="margin-bottom:0.35rem; font-size:0.875rem; color:var(--text-secondary);">${f}</li>`).join('');
+      const findingsList = (data.findings || []).map(f => {
+        const text = typeof f === 'string' ? f : (f.text || f.message || JSON.stringify(f));
+        return `<li style="margin-bottom:0.35rem; font-size:0.875rem; color:var(--text-secondary);">${text}</li>`;
+      }).join('');
 
       return `
         <div style="background:var(--bg-secondary); border:1px solid var(--border-medium); border-radius:var(--radius-lg); padding:1.25rem; margin-bottom:1rem;">

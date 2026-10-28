@@ -62,8 +62,44 @@
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
   
+  /* Primary & Gray high-contrast overrides in dark mode */
+  --primary-50: #1E293B;
+  --primary-100: #334155;
+  --primary-200: #475569;
+  --primary-300: #64748B;
+  --primary-400: #94A3B8;
+  --primary-500: #F8FAFC;
+  --primary-600: #F1F5F9;
+  --gray-600: #94A3B8;
+  --gray-700: #CBD5E1;
+  --gray-800: #E2E8F0;
+  --gray-900: #F8FAFC;
+  
   /* Theme Toggle Icon */
   --theme-icon: '☀️';
+}
+
+/* Breadcrumbs High-Contrast Theme Rules */
+.repo-breadcrumbs {
+  color: var(--text-tertiary) !important;
+}
+.repo-breadcrumbs a {
+  color: var(--text-secondary) !important;
+}
+.repo-breadcrumbs a:hover {
+  color: var(--text-primary) !important;
+}
+.github-breadcrumbs {
+  color: var(--text-primary) !important;
+}
+.github-breadcrumbs .crumb-link {
+  color: var(--text-secondary) !important;
+}
+.github-breadcrumbs .crumb-link:hover {
+  color: var(--text-primary) !important;
+}
+.github-breadcrumbs .crumb-divider {
+  color: var(--text-tertiary) !important;
 }
 
 /* Smooth theme transitions (Targeted for high performance) */

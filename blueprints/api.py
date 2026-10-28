@@ -2,7 +2,7 @@
 API Blueprint - REST API Routes
 """
 
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, redirect
 from services.project_service import ProjectService
 from services.analytics_service import AnalyticsService
 
@@ -170,41 +170,87 @@ def compare_projects():
 
 @api_bp.route('/projects/<int:project_id>/download', methods=['GET'])
 def download_project(project_id):
-    """Download project folder as a ZIP file safely"""
+    """Download project folder as a ZIP file safely (supports local folders and GitHub repositories)"""
     import os
+    import json
     import shutil
     import tempfile
     import zipfile
-    from flask import send_file, after_this_request
+    from flask import send_file, after_this_request, redirect
     from models.project import Project
     
     project = Project.query.get(project_id)
-    if not project or not project.repo_path:
-        return jsonify({'success': False, 'error': 'Project folder not found.'}), 404
+    if not project:
+        return jsonify({'success': False, 'error': 'Project not found.'}), 404
         
-    repo_path = os.path.abspath(project.repo_path)
-    if not os.path.exists(repo_path) or not os.path.isdir(repo_path):
-        return jsonify({'success': False, 'error': 'Local folder does not exist on server.'}), 404
-        
+    repo_path = os.path.abspath(project.repo_path) if project.repo_path else None
+    
+    # 1. If local folder exists on server, package as clean ZIP
+    if repo_path and os.path.exists(repo_path) and os.path.isdir(repo_path):
+        try:
+            temp_dir = tempfile.mkdtemp()
+            zip_filename = f"{project.slug}_source.zip"
+            zip_file_path = os.path.join(temp_dir, zip_filename)
+            
+            with zipfile.ZipFile(zip_file_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
+                for root, dirs, files in os.walk(repo_path):
+                    dirs[:] = [d for d in dirs if d not in ['.git', '__pycache__', 'venv', 'instance', 'node_modules', '.idea', '.vscode']]
+                    for file in files:
+                        if file.startswith('.env') or file.endswith(('.db', '.sqlite', '.pyc', '.key', '.pem')):
+                            continue
+                        file_abs = os.path.join(root, file)
+                        rel_path = os.path.relpath(file_abs, repo_path)
+                        zipf.write(file_abs, rel_path)
+            
+            @after_this_request
+            def remove_temp_folder(response):
+                try:
+                    shutil.rmtree(temp_dir, ignore_errors=True)
+                except Exception:
+                    pass
+                return response
+                
+            return send_file(
+                zip_file_path,
+                mimetype='application/zip',
+                as_attachment=True,
+                download_name=zip_filename
+            )
+        except Exception as e:
+            print(f"Error zipping local folder: {e}")
+            return jsonify({'success': False, 'error': 'Failed to create zip archive.'}), 500
+
+    # 2. If project has a GitHub URL, redirect to GitHub's HEAD.zip (downloads latest main/master branch)
+    if project.github_url and 'github.com' in project.github_url:
+        clean_url = project.github_url.strip().rstrip('/')
+        if clean_url.endswith('.git'):
+            clean_url = clean_url[:-4]
+        return redirect(f"{clean_url}/archive/HEAD.zip", code=302)
+
+    # 3. Fallback: Generate clean project documentation & metadata archive
     try:
         temp_dir = tempfile.mkdtemp()
-        zip_filename = f"{project.slug}_source.zip"
+        zip_filename = f"{project.slug}_archive.zip"
         zip_file_path = os.path.join(temp_dir, zip_filename)
         
-        # Package repository files while strictly excluding sensitive system files
         with zipfile.ZipFile(zip_file_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
-            for root, dirs, files in os.walk(repo_path):
-                dirs[:] = [d for d in dirs if d not in ['.git', '__pycache__', 'venv', 'instance', 'node_modules', '.idea', '.vscode']]
-                for file in files:
-                    if file.startswith('.env') or file.endswith(('.db', '.sqlite', '.pyc', '.key', '.pem')):
-                        continue
-                    file_abs = os.path.join(root, file)
-                    rel_path = os.path.relpath(file_abs, repo_path)
-                    zipf.write(file_abs, rel_path)
+            readme_body = project.description or f"# {project.name}\n\n{project.short_description or 'Project repository archive.'}"
+            zipf.writestr("README.md", readme_body)
+            meta = {
+                'name': project.name,
+                'slug': project.slug,
+                'health_score': project.health_score,
+                'code_quality_score': project.code_quality_score,
+                'documentation_score': project.documentation_score,
+                'stars': project.stars,
+                'forks': project.forks,
+                'technologies': [t.name for t in project.technologies],
+                'categories': [c.name for c in project.categories]
+            }
+            zipf.writestr("project.json", json.dumps(meta, indent=2))
         
-        # Automatically clean up temporary folder when request finishes
         @after_this_request
-        def remove_temp_folder(response):
+        def remove_temp(response):
             try:
                 shutil.rmtree(temp_dir, ignore_errors=True)
             except Exception:
@@ -218,8 +264,7 @@ def download_project(project_id):
             download_name=zip_filename
         )
     except Exception as e:
-        print(f"Error zipping: {e}")
-        return jsonify({'success': False, 'error': 'Failed to create zip archive.'}), 500
+        return jsonify({'success': False, 'error': f'Failed to generate archive: {str(e)}'}), 500
 
 # ============ Statistics API ============
 
