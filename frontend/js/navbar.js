@@ -81,10 +81,18 @@
         container.appendChild(actions);
       }
 
-      this.toggleBtn = actions.querySelector('.header__hamburger');
-      if (!this.toggleBtn) {
+      // 1. Ensure exactly ONE Hamburger Button in header
+      const existingHamburgers = this.header.querySelectorAll('.header__hamburger');
+      if (existingHamburgers.length > 0) {
+        this.toggleBtn = existingHamburgers[0];
+        // Clean up any accidental duplicate hamburger buttons in DOM
+        for (let i = 1; i < existingHamburgers.length; i++) {
+          existingHamburgers[i].remove();
+        }
+      } else {
         this.toggleBtn = document.createElement('button');
         this.toggleBtn.className = 'header__hamburger';
+        this.toggleBtn.id = 'navToggle';
         this.toggleBtn.type = 'button';
         this.toggleBtn.setAttribute('aria-label', 'Open navigation menu');
         this.toggleBtn.setAttribute('aria-expanded', 'false');
