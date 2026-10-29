@@ -258,10 +258,23 @@
         </div>
 
         <!-- Empty & Error States -->
-        <div class="empty-state" id="emptyState" style="display: none; padding: 4rem 0;">
-          <h3>No projects found</h3>
-          <p>Try adjusting your search or filters.</p>
-          <button class="btn btn--primary" id="resetFromEmpty">Clear Filters</button>
+        <div class="empty-state" id="emptyState" style="display: none; flex-direction: column; align-items: center; text-align: center; padding: 3.5rem 1.5rem; background: var(--bg-secondary); border: 1px dashed var(--border-medium); border-radius: var(--radius-xl); margin: 1.5rem 0;">
+          <div style="font-size: 2.5rem; margin-bottom: 0.75rem;">🔍</div>
+          <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.5rem;">No repositories found</h3>
+          <p style="color: var(--text-secondary); max-width: 480px; margin: 0 auto 1.25rem auto; font-size: 0.9375rem; line-height: 1.5;">
+            We couldn't find any projects matching your criteria. Try searching for popular technologies or reset your filters:
+          </p>
+          <div class="empty-state-suggestions" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem; max-width: 520px; margin: 0 auto 1.5rem auto;">
+            <button type="button" class="badge search-pill" data-query="Python" style="cursor: pointer; padding: 0.4rem 0.85rem; font-size: 0.8125rem; border: 1px solid var(--border-medium); background: var(--bg-primary); color: var(--text-primary); border-radius: var(--radius-full); transition: all 0.2s;">🐍 Python</button>
+            <button type="button" class="badge search-pill" data-query="C++" style="cursor: pointer; padding: 0.4rem 0.85rem; font-size: 0.8125rem; border: 1px solid var(--border-medium); background: var(--bg-primary); color: var(--text-primary); border-radius: var(--radius-full); transition: all 0.2s;">⚡ C++</button>
+            <button type="button" class="badge search-pill" data-query="JavaScript" style="cursor: pointer; padding: 0.4rem 0.85rem; font-size: 0.8125rem; border: 1px solid var(--border-medium); background: var(--bg-primary); color: var(--text-primary); border-radius: var(--radius-full); transition: all 0.2s;">🌐 JavaScript</button>
+            <button type="button" class="badge search-pill" data-query="FastAPI" style="cursor: pointer; padding: 0.4rem 0.85rem; font-size: 0.8125rem; border: 1px solid var(--border-medium); background: var(--bg-primary); color: var(--text-primary); border-radius: var(--radius-full); transition: all 0.2s;">🚀 FastAPI</button>
+            <button type="button" class="badge search-pill" data-query="Algorithms" style="cursor: pointer; padding: 0.4rem 0.85rem; font-size: 0.8125rem; border: 1px solid var(--border-medium); background: var(--bg-primary); color: var(--text-primary); border-radius: var(--radius-full); transition: all 0.2s;">📐 Algorithms</button>
+          </div>
+          <button class="btn btn--secondary" id="resetFromEmpty" style="display: inline-flex; align-items: center; gap: 0.5rem; font-weight: 600;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/></svg>
+            <span>Reset All Filters</span>
+          </button>
         </div>
 
         <div class="error-state" id="errorState" style="display: none; padding: 4rem 0;">

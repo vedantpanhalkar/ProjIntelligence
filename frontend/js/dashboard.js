@@ -135,6 +135,22 @@ class DashboardApp {
       });
     }
 
+    // Search suggestion pills (empty state clicks)
+    document.addEventListener('click', (e) => {
+      const pill = e.target.closest('.search-pill');
+      if (pill) {
+        const query = pill.getAttribute('data-query');
+        if (query) {
+          if (this.elements.searchInput) {
+            this.elements.searchInput.value = query;
+          }
+          this.updateSearch(query);
+          this.loadProjects();
+          this.updateResultsInfo();
+        }
+      }
+    });
+
     // Keyboard shortcuts
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {

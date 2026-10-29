@@ -559,8 +559,8 @@
       if (!canvas || !window.THREE) return;
 
       const scene = new THREE.Scene();
-      const renderer = new THREE.WebGLRenderer({ canvas, alpha: true });
-      renderer.setPixelRatio(window.devicePixelRatio);
+      const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, powerPreference: 'high-performance' });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
       renderer.setClearColor(new THREE.Color(0x000000));
 
       const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, -1);
@@ -635,12 +635,31 @@
         uniforms.resolution.value = [width, height];
       };
 
-      let animationId;
+      let animationId = null;
+      let isHeroVisible = true;
+
       const animate = () => {
+        if (!isHeroVisible) {
+          animationId = null;
+          return;
+        }
         uniforms.time.value += 0.01;
         renderer.render(scene, camera);
         animationId = requestAnimationFrame(animate);
       };
+
+      const heroEl = document.getElementById('heroSection');
+      if ('IntersectionObserver' in window && heroEl) {
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            isHeroVisible = entry.isIntersecting;
+            if (isHeroVisible && !animationId) {
+              animate();
+            }
+          });
+        }, { threshold: 0.05 });
+        observer.observe(heroEl);
+      }
 
       handleResize();
       animate();

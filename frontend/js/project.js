@@ -152,6 +152,12 @@ class ProjectApp {
         const parentPath = this.state.currentFile?.path ? 
           this.state.currentFile.path.split('/').slice(0, -1).join('/') : '';
         this.renderDirectory(parentPath);
+        setTimeout(() => {
+          const topBar = document.querySelector('.github-topbar');
+          if (topBar) {
+            topBar.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }, 40);
       });
     }
 
@@ -987,6 +993,16 @@ class ProjectApp {
     if (this.elements.githubDirectoryView) this.elements.githubDirectoryView.style.display = 'none';
     if (this.elements.githubCodeView) this.elements.githubCodeView.style.display = 'block';
     if (this.elements.githubBackToFilesBtn) this.elements.githubBackToFilesBtn.style.display = 'inline-flex';
+
+    // Smoothly scroll code viewer into view
+    setTimeout(() => {
+      const topBar = document.querySelector('.github-topbar');
+      if (topBar) {
+        topBar.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } else if (this.elements.githubCodeView) {
+        this.elements.githubCodeView.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 40);
 
     // Update breadcrumbs
     this.renderBreadcrumbs(parentDir, file.name);

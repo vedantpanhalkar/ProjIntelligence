@@ -933,6 +933,24 @@ body.mobile-nav-locked {
 }
 
 /* ===== ENHANCED SEARCH BAR ===== */
+.search-pill {
+  transition: all var(--duration-200, 0.2s) ease;
+}
+
+.search-pill:hover {
+  background: var(--primary-50) !important;
+  border-color: var(--primary-500) !important;
+  color: var(--primary-600) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+}
+
+[data-theme="dark"] .search-pill:hover {
+  background: rgba(59, 130, 246, 0.2) !important;
+  border-color: var(--primary-400) !important;
+  color: #38bdf8 !important;
+}
+
 .search-bar {
   position: relative;
 }
