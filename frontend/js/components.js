@@ -10,10 +10,10 @@
 const createProjectCard = (project) => {
   if (!project) return document.createElement('div');
 
-  const { 
-    id, name = 'Untitled Project', description = '', health_score = 0, 
-    stars, forks, github_stars, github_forks, languages = [], 
-    technologies = [], categories = [], created_at, verified, status = 'active' 
+  const {
+    id, name = 'Untitled Project', description = '', health_score = 0,
+    stars, forks, github_stars, github_forks, languages = [],
+    technologies = [], categories = [], created_at, verified, status = 'active'
   } = project;
 
   const totalStars = stars ?? github_stars ?? 0;
@@ -45,10 +45,10 @@ const createProjectCard = (project) => {
   const displayTags = allTags.slice(0, maxDisplayTags);
   const remainingCount = allTags.length - displayTags.length;
 
-  const tagsHtml = displayTags.map(tag => 
+  const tagsHtml = displayTags.map(tag =>
     `<span class="badge">${utils?.sanitizeHtml ? utils.sanitizeHtml(tag.name) : tag.name}</span>`
   ).join('') + (remainingCount > 0 ? `<span class="badge badge--more">+${remainingCount} more</span>` : '');
-  
+
   const card = utils?.createElement ? utils.createElement('article', {
     className: 'project-card',
     'data-project-id': id || '',
@@ -67,8 +67,8 @@ const createProjectCard = (project) => {
   const projectDetailUrl = id ? `project-detail.html?id=${id}` : '#';
 
   const cleanTitle = utils?.sanitizeHtml ? utils.sanitizeHtml(name) : name;
-  const cleanDesc = utils?.truncateText ? 
-    utils.truncateText(utils.sanitizeHtml(description || 'No description available'), 120) : 
+  const cleanDesc = utils?.truncateText ?
+    utils.truncateText(utils.sanitizeHtml(description || 'No description available'), 120) :
     (description || 'No description available').slice(0, 120);
 
   const formattedStars = utils?.formatNumber ? utils.formatNumber(totalStars) : totalStars;
@@ -105,11 +105,11 @@ const createProjectCard = (project) => {
         ${formattedForks}
       </div>
       <div class="project-card__status">
-        ${isAvailable 
-          ? `<span class="badge badge--success">Available</span>` 
-          : `<span class="badge" style="background: var(--warning-bg); color: var(--warning);">Coming Soon</span>`}
+        ${isAvailable
+      ? `<span class="badge badge--success">Available</span>`
+      : `<span class="badge" style="background: var(--warning-bg); color: var(--warning);">Coming Soon</span>`}
       </div>
-      <a href="${isAvailable ? projectDetailUrl : '#'}" class="btn btn--primary project-card__action${!isAvailable ? ' btn--disabled' : ''}">
+      <a href="${isAvailable ? projectDetailUrl : '#'}" class="btn btn--primary project-card__action${!isAvailable ? ' btn--disabled' : ''}" aria-label="View project ${cleanTitle}">
         View Project
       </a>
     </div>
@@ -175,7 +175,7 @@ const createPagination = (currentPage, totalPages, onPageChange) => {
 
   // Create page numbers
   pagesContainer.innerHTML = '';
-  
+
   const createPageButton = (page, isActive = false) => {
     const btn = utils.createElement('button', {
       className: `pagination__page ${isActive ? 'pagination__page--active' : ''}`,
@@ -183,14 +183,14 @@ const createPagination = (currentPage, totalPages, onPageChange) => {
       'aria-label': `Go to page ${page}`,
       'aria-current': isActive ? 'page' : 'false'
     });
-    
+
     btn.addEventListener('click', () => onPageChange(page));
     return btn;
   };
 
   // Show pages with ellipsis logic
   let pages = [];
-  
+
   if (totalPages <= 7) {
     // Show all pages
     for (let i = 1; i <= totalPages; i++) {
@@ -199,22 +199,22 @@ const createPagination = (currentPage, totalPages, onPageChange) => {
   } else {
     // Show first page, ellipsis, current area, ellipsis, last page
     pages.push(1);
-    
+
     if (currentPage > 4) {
       pages.push('...');
     }
-    
+
     const start = Math.max(2, currentPage - 1);
     const end = Math.min(totalPages - 1, currentPage + 1);
-    
+
     for (let i = start; i <= end; i++) {
       pages.push(i);
     }
-    
+
     if (currentPage < totalPages - 3) {
       pages.push('...');
     }
-    
+
     if (totalPages > 1) {
       pages.push(totalPages);
     }
@@ -265,7 +265,7 @@ const createStatCard = ({ icon, label, value, change }) => {
  */
 const populateFilterSelect = (selectElement, options, placeholder = 'All') => {
   selectElement.innerHTML = `<option value="">${placeholder}</option>`;
-  
+
   options.forEach(option => {
     const optionElement = utils.createElement('option', {
       value: option.value || option,
@@ -284,7 +284,7 @@ const navigateToProject = (projectId) => {
   // Add smooth transition effect
   document.body.style.opacity = '0.8';
   document.body.style.transition = 'opacity 200ms ease-out';
-  
+
   setTimeout(() => {
     window.location.href = `project-detail.html?id=${projectId}`;
   }, 100);
@@ -336,7 +336,7 @@ const initializeThemeToggle = () => {
 const initializeSearch = (onSearch) => {
   const searchInput = utils.$('#searchInput');
   const clearBtn = utils.$('#clearSearch');
-  
+
   if (!searchInput) return;
 
   // Debounced search function
@@ -344,12 +344,12 @@ const initializeSearch = (onSearch) => {
 
   searchInput.addEventListener('input', (e) => {
     const query = e.target.value.trim();
-    
+
     // Show/hide clear button
     if (clearBtn) {
       clearBtn.style.display = query ? 'flex' : 'none';
     }
-    
+
     debouncedSearch(query);
   });
 

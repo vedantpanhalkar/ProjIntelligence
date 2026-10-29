@@ -534,6 +534,26 @@ body.mobile-nav-locked {
 
 .project-card__action {
   margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 38px;
+  padding: 0 var(--space-4);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: #ffffff !important;
+  text-decoration: none !important;
+  border-radius: var(--radius-lg, 10px);
+  box-sizing: border-box;
+  white-space: nowrap;
+  transition: transform var(--duration-200) var(--ease-out), box-shadow var(--duration-200) var(--ease-out);
+}
+
+.project-card__action:visited,
+.project-card__action:hover,
+.project-card__action:active {
+  color: #ffffff !important;
+  text-decoration: none !important;
 }
 
 .btn--disabled {
@@ -699,25 +719,55 @@ body.mobile-nav-locked {
     text-align: center;
   }
   
-  /* Responsive project card footer - wrap to two rows */
+  /* Responsive project card footer - 2 rows on mobile/tablet */
   .project-card__meta {
-    gap: var(--space-3);
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: var(--space-2) var(--space-3) !important;
+    padding-top: var(--space-3) !important;
+    margin-top: var(--space-3) !important;
   }
   
   .project-card__stat {
-    font-size: var(--text-xs);
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    font-size: var(--text-xs) !important;
+    flex: 0 0 auto !important;
   }
   
-  /* Keep status and button on same line */
+  /* Status stays on row 1, pushed to right */
   .project-card__status {
-    margin-left: auto;
+    display: inline-flex !important;
+    align-items: center !important;
+    margin-left: auto !important;
+    flex: 0 0 auto !important;
   }
   
-  /* When it wraps, button takes full width of new row */
+  /* Full-width touch-friendly button on row 2 */
   .project-card__action {
-    flex: 1 1 100%;
-    margin-left: 0;
-    min-width: 140px;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    flex: 0 0 100% !important;
+    height: 42px !important;
+    min-height: 42px !important;
+    max-height: 42px !important;
+    box-sizing: border-box !important;
+    margin-top: var(--space-2_5, 10px) !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding: 0 var(--space-4) !important;
+    font-size: var(--text-sm) !important;
+    font-weight: 600 !important;
+    line-height: normal !important;
+    color: #ffffff !important;
+    text-decoration: none !important;
+    border-radius: var(--radius-lg, 10px) !important;
+    cursor: pointer !important;
   }
 }
 
@@ -764,32 +814,45 @@ body.mobile-nav-locked {
   }
   
   .project-card__meta {
-    gap: var(--space-2);
+    gap: var(--space-2) !important;
   }
   
   .project-card__stat {
-    font-size: 0.6875rem;
-    gap: var(--space-1);
+    font-size: 0.75rem !important;
+    gap: 4px !important;
   }
   
   .project-card__stat svg {
-    width: 14px;
-    height: 14px;
+    width: 14px !important;
+    height: 14px !important;
+    flex-shrink: 0;
   }
   
-  .badge {
-    font-size: 0.625rem;
-    padding: var(--space-1) var(--space-2);
+  .project-card__status .badge {
+    font-size: 0.6875rem !important;
+    padding: 3px 8px !important;
   }
   
   /* Full width button on mobile */
   .project-card__action {
-    width: 100%;
-    flex: 1 1 100%;
-    text-align: center;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    flex: 0 0 100% !important;
+    height: 42px !important;
+    min-height: 42px !important;
+    max-height: 42px !important;
+    box-sizing: border-box !important;
+    margin-top: var(--space-3) !important;
+    margin-left: 0 !important;
+    font-size: var(--text-sm) !important;
+    font-weight: 600 !important;
+    color: #ffffff !important;
+    text-decoration: none !important;
   }
   
-  .btn--primary {
+  .btn--primary:not(.project-card__action) {
     font-size: var(--text-xs);
     height: 36px;
     padding: 0 var(--space-3);
@@ -813,26 +876,42 @@ body.mobile-nav-locked {
 
 /* Small mobile phones */
 @media (max-width: 360px) {
-  /* Stack everything vertically */
   .project-card__meta {
-    flex-direction: column;
-    align-items: stretch;
-    gap: var(--space-3);
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    gap: var(--space-2) !important;
   }
   
-  .project-card__stat,
-  .project-card__status {
-    width: 100%;
-    justify-content: flex-start;
+  .project-card__stat {
+    font-size: 0.7rem !important;
+    gap: 4px !important;
+    flex: 0 0 auto !important;
+    width: auto !important;
   }
   
   .project-card__status {
-    margin-left: 0;
+    margin-left: auto !important;
+    flex: 0 0 auto !important;
+    width: auto !important;
   }
   
   .project-card__action {
-    width: 100%;
-    margin-left: 0;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    flex: 0 0 100% !important;
+    height: 40px !important;
+    min-height: 40px !important;
+    max-height: 40px !important;
+    box-sizing: border-box !important;
+    margin-top: var(--space-2_5, 10px) !important;
+    margin-left: 0 !important;
+    font-size: 0.8125rem !important;
+    font-weight: 600 !important;
+    color: #ffffff !important;
+    text-decoration: none !important;
   }
 }
 /* ===== GLASS MORPHISM EFFECTS ===== */
