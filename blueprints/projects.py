@@ -9,6 +9,11 @@ projects_bp = Blueprint('projects', __name__)
 
 FRONTEND_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'frontend'))
 
+@projects_bp.route('/health')
+def root_health():
+    """Lightweight root health check for keep-alive pings"""
+    return {"status": "healthy", "service": "projintelligence"}, 200
+
 @projects_bp.route('/')
 @projects_bp.route('/index.html')
 def home():
