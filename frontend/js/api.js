@@ -31,7 +31,7 @@ class APIClient {
    * Get stored JWT token
    */
   getToken() {
-    return localStorage.getItem('jwt_token');
+    return localStorage.getItem('jwt_token') || localStorage.getItem('adminToken') || null;
   }
 
   /**
@@ -40,9 +40,11 @@ class APIClient {
   setToken(token) {
     if (token) {
       localStorage.setItem('jwt_token', token);
+      localStorage.setItem('adminToken', token);
       this.token = token;
     } else {
       localStorage.removeItem('jwt_token');
+      localStorage.removeItem('adminToken');
       this.token = null;
     }
   }
@@ -52,13 +54,14 @@ class APIClient {
    */
   getHeaders(isJSON = true) {
     const headers = {};
+    const token = this.token || this.getToken();
     
     if (isJSON) {
       headers['Content-Type'] = 'application/json';
     }
     
-    if (this.token) {
-      headers['Authorization'] = `Bearer ${this.token}`;
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
     }
     
     return headers;
@@ -76,10 +79,33 @@ class APIClient {
 
     try {
       const response = await fetch(url, config);
-      const data = await response.json();
+      let data = null;
+      const contentType = response.headers.get('content-type') || '';
+
+      if (contentType.includes('application/json')) {
+        data = await response.json();
+      } else {
+        const text = await response.text();
+        try {
+          data = JSON.parse(text);
+        } catch (_) {
+          if (!response.ok) {
+            let errorMsg = `Server returned status ${response.status}: ${response.statusText}`;
+            if (response.status === 403) {
+              errorMsg = 'Upload blocked by security firewall (403 Forbidden). Folder contains restricted files or uncompressed code flagged by proxy. Using ZIP archive resolves this.';
+            } else if (response.status === 401) {
+              errorMsg = 'Admin session expired (401 Unauthorized). Please log in to admin panel again.';
+            } else if (response.status === 413) {
+              errorMsg = 'File too large (413 Payload Too Large). Maximum upload limit is 50MB.';
+            }
+            throw new Error(errorMsg);
+          }
+          data = { success: true, data: text };
+        }
+      }
 
       if (!response.ok) {
-        const errorMsg = data.error?.message || data.message || `HTTP ${response.status}: ${response.statusText}`;
+        const errorMsg = data?.error?.message || data?.message || `HTTP ${response.status}: ${response.statusText}`;
         throw new Error(errorMsg);
       }
 

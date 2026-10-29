@@ -19,10 +19,17 @@ admin_service = AdminService()
 project_service = ProjectService()
 
 def get_current_admin_user():
-    """Extract authenticated admin from Authorization Bearer token or session"""
+    """Extract authenticated admin from Authorization Bearer token, custom header, or session"""
     auth_header = request.headers.get('Authorization', '')
+    token = None
     if auth_header.startswith('Bearer '):
         token = auth_header.split(' ', 1)[1].strip()
+    elif request.headers.get('X-Admin-Token'):
+        token = request.headers.get('X-Admin-Token').strip()
+    elif request.form.get('admin_token'):
+        token = request.form.get('admin_token').strip()
+
+    if token:
         admin = admin_service.verify_token(token)
         if admin:
             return admin

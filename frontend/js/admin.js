@@ -364,17 +364,37 @@ class AdminApp {
     try {
       let res;
       if (isFolderOrZip) {
-        this.elements.uploadProgressText.textContent = 'Packaging files & sending to parser...';
+        this.elements.uploadProgressText.textContent = 'Packaging files & preparing upload...';
         const formData = new FormData();
         formData.append('name', name);
         formData.append('is_featured', isFeatured ? 'true' : 'false');
         if (github_url) formData.append('github_url', github_url);
         if (description) formData.append('description', description);
+        if (this.state.token) formData.append('admin_token', this.state.token);
 
         if (this.state.selectedFileType === 'zip') {
           formData.append('zip_file', this.state.selectedFiles[0]);
+        } else if (typeof JSZip !== 'undefined') {
+          // Client-side zip bundling: Packages folder into a clean archive in-memory to bypass proxy/WAF multipart 403 blocks
+          this.elements.uploadProgressText.textContent = 'Compressing folder into archive...';
+          const zip = new JSZip();
+          for (let i = 0; i < this.state.selectedFiles.length; i++) {
+            const f = this.state.selectedFiles[i];
+            const relPath = (f.webkitRelativePath || f.name).replace(/\\/g, '/');
+            zip.file(relPath, f);
+          }
+          const zipBlob = await zip.generateAsync({
+            type: 'blob',
+            compression: 'DEFLATE',
+            compressionOptions: { level: 6 }
+          }, (metadata) => {
+            const p = Math.round(30 + metadata.percent * 0.35);
+            this.elements.uploadProgressBar.style.width = `${p}%`;
+            this.elements.uploadPercent.textContent = `${p}%`;
+          });
+          formData.append('zip_file', zipBlob, `${name}.zip`);
         } else {
-          // Folder upload
+          // Standard multi-file upload
           for (let i = 0; i < this.state.selectedFiles.length; i++) {
             const f = this.state.selectedFiles[i];
             formData.append('files', f);
@@ -382,9 +402,9 @@ class AdminApp {
           }
         }
 
-        this.elements.uploadProgressBar.style.width = '65%';
-        this.elements.uploadPercent.textContent = '65%';
-        this.elements.uploadProgressText.textContent = 'Calculating code health, AST metrics & technologies...';
+        this.elements.uploadProgressBar.style.width = '70%';
+        this.elements.uploadPercent.textContent = '70%';
+        this.elements.uploadProgressText.textContent = 'Analyzing AST, dependencies, security & code health...';
 
         res = await api.uploadProject(formData);
       } else {
@@ -415,6 +435,11 @@ class AdminApp {
         }, 400);
       } else {
         const errorMsg = res?.error?.message || 'Server failed to process project';
+        if (errorMsg.includes('401') || errorMsg.includes('Unauthorized') || errorMsg.includes('Session expired')) {
+          alert('Admin session expired. Please log in again.');
+          this.handleLogout();
+          return;
+        }
         alert('Error: ' + errorMsg);
         this.resetUploadProgress();
       }
